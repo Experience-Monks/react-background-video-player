@@ -3,17 +3,11 @@ import React, {PropTypes} from 'react';
 import {BackgroundCover} from 'background-cover';
 
 class BackgroundVideo extends React.Component {
-
   constructor(props) {
     super(props);
-
     this.state = {
       visible: false,
     };
-  }
-
-  componentWillMount() {
-
   }
 
   componentDidMount() {
@@ -21,36 +15,25 @@ class BackgroundVideo extends React.Component {
     this.video = this.refs.video;
 
     if (this.video.readyState !== 4) {
-      this.video.addEventListener('loadedmetadata', this.handleVideoReady);
+      this.video.addEventListener('loadedmetadata', this._handleVideoReady);
     } else {
-      this.handleVideoReady();
+      this._handleVideoReady();
     }
 
     this.video.addEventListener('play', this.props.onPlay);
     this.video.addEventListener('pause', this.props.onPause);
   }
 
-  componentWillAppear(done) {
-    this.animateIn(done);
-  }
-
-  componentWillEnter(done) {
-    this.animateIn(done);
-  }
-
-  componentWillLeave(done) {
-    this.animateOut(done);
-  }
-
   componentWillUnmount() {
-    this.video.removeEventListener('loadedmetadata', this.handleVideoReady);
+    this.video.removeEventListener('loadedmetadata', this._handleVideoReady);
     this.video.removeEventListener('play', this.props.onPlay);
     this.video.removeEventListener('pause', this.props.onPause);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.windowWidth !== nextProps.windowWidth || this.props.windowHeight !== nextProps.windowHeight) {
-      this.resize();
+    if (this.props.windowWidth !== nextProps.windowWidth || 
+        this.props.windowHeight !== nextProps.windowHeight) {
+      _resize();
     }
   }
 
@@ -58,20 +41,32 @@ class BackgroundVideo extends React.Component {
     return true; // add conditions when needed
   }
 
-  animateIn = (done) => {
-    done && done();
+  _handleVideoReady = () => {
+    this.setState({visible: true});
+    this._resize();
+    this.video.currentTime = this.props.currentTime;
+    this.props.autoPlay && this.video.play();
+    this.props.onReady();
   };
 
-  animateOut = (done) => {
-    done && done();
+  _resize = () => {
+    BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
   };
+
+  _handleTimeUpdate = () => {
+    let currentTime = Math.round(this.video.currentTime);
+    let duration = Math.round(this.video.duration);
+    let progress = currentTime / duration;
+    this.props.onTimeUpdate(currentTime, progress, duration);
+  };
+
+  _handleVideoEnd = () => {
+    this.props.onEnd();
+  };
+
 
   togglePlay = () => {
     this.video.paused ? this.video.play() : this.video.pause();
-  };
-
-  setCurrentTime = (val) => {
-    this.video.currentTime = val;
   };
 
   toggleMute = () => {
@@ -79,31 +74,11 @@ class BackgroundVideo extends React.Component {
     this.video.muted ? this.props.onMute() : this.props.onUnmute();
   };
 
-  resize = () => {
-    BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
-  };
-
-  handleVideoEnd = () => {
-    this.props.onEnd();
-  };
-
-  handleTimeUpdate = () => {
-    let currentTime = Math.round(this.video.currentTime);
-    let duration = Math.round(this.video.duration);
-    let progress = currentTime / duration;
-    this.props.onTimeUpdate(currentTime, progress, duration);
-  };
-
-  handleVideoReady = () => {
-    this.setState({visible: true});
-    this.resize();
-    this.props.autoPlay && this.video.play();
-    this.props.onReady();
+  setCurrentTime = (val) => {
+    this.video.currentTime = val;
   };
 
   render() {
-    //console.log('render BackgroundVideo');
-
     let style = Object.assign({}, {visibility: this.state.visible ? 'visible' : 'hidden'}, this.props.style);
     let className = 'BackgroundVideo';
 
@@ -120,8 +95,8 @@ class BackgroundVideo extends React.Component {
           preload={this.props.preload}
           muted={this.props.muted}
           loop={this.props.loop}
-          onTimeUpdate={this.handleTimeUpdate}
-          onEnded={this.handleVideoEnd}
+          onTimeUpdate={this._handleTimeUpdate}
+          onEnded={this._handleVideoEnd}
           aria-hidden="true"
           role="presentation"
         />
@@ -143,6 +118,7 @@ BackgroundVideo.propTypes = {
   muted: PropTypes.bool,
   loop: PropTypes.bool,
   autoPlay: PropTypes.bool,
+  currentTime: PropTypes.number,
   onReady: PropTypes.func,
   onPlay: PropTypes.func,
   onPause: PropTypes.func,
@@ -158,13 +134,14 @@ BackgroundVideo.defaultProps = {
     height: '100%',
   },
   className: '',
+  poster: '',
   horizontalAlign: 0.5,
   verticalAlign: 0.5,
   preload: 'auto',
   muted: false,
   loop: true,
   autoPlay: true,
-  poster: '',
+  currentTime: 0,
   onReady: f => f,
   onPlay: f => f,
   onPause: f => f,

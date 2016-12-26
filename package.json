@@ -1,14 +1,10 @@
 {
-  "name": "react-background-video",
+  "name": "react-background-video-player",
   "version": "0.0.1",
-  "description": "",
+  "description": "React background video component with simple player API",
   "main": "index.js",
   "license": "MIT",
-  "author": {
-    "name": "Vadim Namniak",
-    "email": "vadim@jam3.com",
-    "url": "vadim@jam3.com"
-  },
+  "author": "Vadim Namniak <vadim@jam3.com> (https://github.com/namniak)",
   "dependencies": {
     "background-cover": "0.0.6",
     "domready": "^1.0.8",
@@ -37,10 +33,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/Jam3/react-background-video.git"
+    "url": "git://github.com/Jam3/react-background-video-player.git"
   },
-  "homepage": "https://github.com/Jam3/react-background-video",
+  "homepage": "https://github.com/Jam3/react-background-video-player",
   "bugs": {
-    "url": "https://github.com/Jam3/react-background-video/issues"
+    "url": "https://github.com/Jam3/react-background-video-player/issues"
+  },
+  "directories": {
+    "example": "example"
   }
 }

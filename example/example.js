@@ -89,6 +89,7 @@ domready(() => {
             onMute={this.handleOnMute}
             onUnmute={this.handleOnUnmute}
             onTimeUpdate={this.handleTimeUpdate}
+            currentTime={10}
           />
 
           <nav style={{position: 'absolute', left: 30, bottom: 30, display: 'flex', alignItems: 'center'}}>
