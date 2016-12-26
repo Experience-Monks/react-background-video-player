@@ -33,7 +33,7 @@ class BackgroundVideo extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.windowWidth !== nextProps.windowWidth || 
         this.props.windowHeight !== nextProps.windowHeight) {
-      _resize();
+      this._resize();
     }
   }
 
@@ -44,13 +44,15 @@ class BackgroundVideo extends React.Component {
   _handleVideoReady = () => {
     this.setState({visible: true});
     this._resize();
-    this.video.currentTime = this.props.currentTime;
-    this.props.autoPlay && this.video.play();
+    this.setCurrentTime(this.props.currentTime);
+    this.props.autoPlay && this.play();
     this.props.onReady();
   };
 
   _resize = () => {
-    BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
+    if (!this.props.disableBackgroundCover) {
+      BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
+    }
   };
 
   _handleTimeUpdate = () => {
@@ -64,14 +66,30 @@ class BackgroundVideo extends React.Component {
     this.props.onEnd();
   };
 
+  play = () => {
+    this.video.play();
+  };
+
+  pause = () => {
+    this.video.pause();
+  };
 
   togglePlay = () => {
-    this.video.paused ? this.video.play() : this.video.pause();
+    this.video.paused ? this.play() : this.pause();
+  };
+
+  mute = () => {
+    this.video.muted = true;
+    this.props.onMute();
+  };
+
+  unmute = () => {
+    this.video.muted = false;
+    this.props.onUnmute();
   };
 
   toggleMute = () => {
-    this.video.muted = !this.video.muted;
-    this.video.muted ? this.props.onMute() : this.props.onUnmute();
+    this.video.muted ? this.unmute() : this.mute();
   };
 
   setCurrentTime = (val) => {
@@ -106,6 +124,7 @@ class BackgroundVideo extends React.Component {
 }
 
 BackgroundVideo.propTypes = {
+  disableBackgroundCover: PropTypes.bool,
   style: PropTypes.object,
   className: PropTypes.string,
   windowWidth: PropTypes.number.isRequired,
@@ -129,6 +148,7 @@ BackgroundVideo.propTypes = {
 };
 
 BackgroundVideo.defaultProps = {
+  disableBackgroundCover: false,
   style: {
     width: '100%',
     height: '100%',
