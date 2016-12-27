@@ -1,14 +1,13 @@
 {
   "name": "react-background-video-player",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "React background video component with simple player API",
   "main": "index.js",
   "license": "MIT",
   "author": "Vadim Namniak <vadim@jam3.com> (https://github.com/namniak)",
   "dependencies": {
     "background-cover": "0.0.6",
-    "react": "^15.4.1",
-    "react-dom": "^15.1.0"
+    "react": "^15.4.1"
   },
   "devDependencies": {
     "babel-core": "^6.10.4",
@@ -19,7 +18,8 @@
     "babelify": "^7.3.0",
     "budo": "^8.3.0",
     "brfs": "^1.4.3",
-    "domready": "^1.0.8"
+    "domready": "^1.0.8",
+    "react-dom": "^15.1.0"
   },
   "scripts": {
     "start": "budo example/example.js --live  --open -- -t babelify -t brfs"
