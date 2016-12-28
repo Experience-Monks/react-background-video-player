@@ -10,15 +10,15 @@ In your terminal go to component folder and run ```npm start```
 ## Component Props
 ```javascript
 {
-  disableBackgroundCover: PropTypes.bool,
+  disableBackgroundCover: PropTypes.bool,  // do not apply cover effect
   style: PropTypes.object,
   className: PropTypes.string,
-  windowWidth: PropTypes.number.isRequired,
-  windowHeight: PropTypes.number.isRequired,
+  containerWidth: PropTypes.number.isRequired,
+  containerHeight: PropTypes.number.isRequired,
   src: PropTypes.string.isRequired,
   poster: PropTypes.string,
-  horizontalAlign: PropTypes.number,
-  verticalAlign: PropTypes.number,
+  horizontalAlign: PropTypes.number, // 0 to 1. 0 means video is anchored to the left (default is 0.5)
+  verticalAlign: PropTypes.number,   // 0 to 1. 0 means video is anchored to the top (default is 0.5)
   preload: PropTypes.string,
   muted: PropTypes.bool,
   loop: PropTypes.bool,

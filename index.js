@@ -31,8 +31,8 @@ class BackgroundVideo extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.windowWidth !== nextProps.windowWidth || 
-        this.props.windowHeight !== nextProps.windowHeight) {
+    if (this.props.containerWidth !== nextProps.containerWidth || 
+        this.props.containerHeight !== nextProps.containerHeight) {
       this._resize();
     }
   }
@@ -127,8 +127,8 @@ BackgroundVideo.propTypes = {
   disableBackgroundCover: PropTypes.bool,
   style: PropTypes.object,
   className: PropTypes.string,
-  windowWidth: PropTypes.number.isRequired,
-  windowHeight: PropTypes.number.isRequired,
+  containerWidth: PropTypes.number.isRequired,
+  containerHeight: PropTypes.number.isRequired,
   src: PropTypes.string.isRequired,
   poster: PropTypes.string,
   horizontalAlign: PropTypes.number,
