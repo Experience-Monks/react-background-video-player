@@ -1,8 +1,12 @@
 'use strict';
-import React, {PropTypes} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {BackgroundCover} from 'background-cover';
+import playInlineVideo from 'iphone-inline-video';
+import insertRule from 'insert-rule';
 
-class BackgroundVideo extends React.Component {
+
+class BackgroundVideo extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -11,8 +15,16 @@ class BackgroundVideo extends React.Component {
   }
 
   componentDidMount() {
-    this.container = this.refs.container;
-    this.video = this.refs.video;
+    if (this.props.playsInline) {
+      playInlineVideo(this.video);
+      insertRule([
+          'video::-webkit-media-controls-start-playback-button', 
+          '.IIV::-webkit-media-controls-play-button'
+        ], {
+          display: 'none',
+        }
+      );
+    }
 
     if (this.video.readyState !== 4) {
       this.video.addEventListener('loadedmetadata', this._handleVideoReady);
@@ -42,10 +54,10 @@ class BackgroundVideo extends React.Component {
   }
 
   _handleVideoReady = () => {
-    this.setState({visible: true});
     this._resize();
-    this.setCurrentTime(this.props.currentTime);
+    this.setCurrentTime(this.props.startTime);
     this.props.autoPlay && this.play();
+    this.setState({visible: true});
     this.props.onReady();
   };
 
@@ -56,6 +68,7 @@ class BackgroundVideo extends React.Component {
   };
 
   _handleTimeUpdate = () => {
+    this._handleIOSStartTime();
     let currentTime = Math.round(this.video.currentTime);
     let duration = Math.round(this.video.duration);
     let progress = currentTime / duration;
@@ -65,6 +78,12 @@ class BackgroundVideo extends React.Component {
   _handleVideoEnd = () => {
     this.props.onEnd();
   };
+
+  _handleIOSStartTime = () => {
+    if (this.video.currentTime < this.props.startTime) {
+      this.setCurrentTime(this.props.startTime);
+    }
+  }
 
   play = () => {
     this.video.play();
@@ -97,17 +116,26 @@ class BackgroundVideo extends React.Component {
   };
 
   render() {
-    let style = Object.assign({}, {visibility: this.state.visible ? 'visible' : 'hidden'}, this.props.style);
     let className = 'BackgroundVideo';
+    let visibility = this.state.visible ? 'visible' : 'hidden';
+    let style = Object.assign({
+      position: 'absolute', 
+      width: '100%', 
+      height: '100%', 
+      visibility
+    }, this.props.style);
+
+    let extraProps = {};
+    if (this.props.playsInline) extraProps.playsInline = true;
 
     return (
       <div
-        ref="container"
+        ref={c => this.container = c}
         className={`${className} ${this.props.className}`}
         style={style}
       >
         <video
-          ref="video"
+          ref={v => this.video = v}
           src={this.props.src}
           poster={this.props.poster}
           preload={this.props.preload}
@@ -115,8 +143,7 @@ class BackgroundVideo extends React.Component {
           loop={this.props.loop}
           onTimeUpdate={this._handleTimeUpdate}
           onEnded={this._handleVideoEnd}
-          aria-hidden="true"
-          role="presentation"
+          {...extraProps}
         />
       </div>
     )
@@ -124,6 +151,7 @@ class BackgroundVideo extends React.Component {
 }
 
 BackgroundVideo.propTypes = {
+  playsInline: PropTypes.bool,
   disableBackgroundCover: PropTypes.bool,
   style: PropTypes.object,
   className: PropTypes.string,
@@ -137,7 +165,7 @@ BackgroundVideo.propTypes = {
   muted: PropTypes.bool,
   loop: PropTypes.bool,
   autoPlay: PropTypes.bool,
-  currentTime: PropTypes.number,
+  startTime: PropTypes.number,
   onReady: PropTypes.func,
   onPlay: PropTypes.func,
   onPause: PropTypes.func,
@@ -148,20 +176,18 @@ BackgroundVideo.propTypes = {
 };
 
 BackgroundVideo.defaultProps = {
+  playsInline: true,
   disableBackgroundCover: false,
-  style: {
-    width: '100%',
-    height: '100%',
-  },
+  style: {},
   className: '',
   poster: '',
   horizontalAlign: 0.5,
   verticalAlign: 0.5,
   preload: 'auto',
-  muted: false,
+  muted: true,
   loop: true,
   autoPlay: true,
-  currentTime: 0,
+  startTime: 0,
   onReady: f => f,
   onPlay: f => f,
   onPause: f => f,

@@ -1,12 +1,14 @@
 {
   "name": "react-background-video-player",
-  "version": "0.0.4",
-  "description": "React background video component with simple player API",
+  "version": "0.0.5",
+  "description": "React background video component with simple player API. Supports inline play on iPhone.",
   "main": "index.js",
   "license": "MIT",
   "author": "Vadim Namniak <vadim@jam3.com> (https://github.com/namniak)",
   "dependencies": {
     "background-cover": "0.0.6",
+    "insert-rule": "^2.1.0",
+    "iphone-inline-video": "^1.9.4",
     "react": "^15.4.1"
   },
   "devDependencies": {
@@ -22,7 +24,7 @@
     "react-dom": "^15.1.0"
   },
   "scripts": {
-    "start": "budo example/example.js --live  --open -- -t babelify -t brfs"
+    "test": "budo example/example.js --live  --open -- -t babelify -t brfs"
   },
   "keywords": [
     "react",
@@ -30,7 +32,8 @@
     "component",
     "background",
     "video player",
-    "react component"
+    "react component",
+    "inline iPhone"
   ],
   "repository": {
     "type": "git",

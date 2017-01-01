@@ -67,11 +67,11 @@ domready(() => {
     };
 
     togglePlay = () => {
-      this.refs.player.togglePlay();
+      this.player.togglePlay();
     };
 
     toggleMute = () => {
-      this.refs.player.toggleMute();
+      this.player.toggleMute();
     };
 
     render() {
@@ -79,7 +79,7 @@ domready(() => {
         <div style={{position: 'absolute', width:' 100%', height: '100%'}}>
 
           <TestComponent
-            ref="player"
+            ref={p => this.player = p}
             containerWidth={this.state.windowWidth}
             containerHeight={this.state.windowHeight}
             src={'http://clips.vorwaerts-gmbh.de/VfE_html5.mp4'}
@@ -89,7 +89,7 @@ domready(() => {
             onMute={this.handleOnMute}
             onUnmute={this.handleOnUnmute}
             onTimeUpdate={this.handleTimeUpdate}
-            currentTime={10}
+            startTime={10}
           />
 
           <nav style={{position: 'absolute', left: 30, bottom: 30, display: 'flex', alignItems: 'center'}}>
@@ -98,6 +98,7 @@ domready(() => {
             <button style={{width: 70}} onClick={this.toggleMute}> {this.state.isMuted ? 'Unmute' : 'Mute'} </button>
             <time>{this.state.currentTime} / {this.state.duration}</time>
           </nav>
+          
         </div>
       )
     }
