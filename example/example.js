@@ -17,8 +17,8 @@ domready(() => {
     constructor(props) {
       super(props);
       this.state = {
-        isPlaying: false,
-        isMuted: false,
+        isPlaying: undefined,
+        isMuted: undefined,
         progress: 0,
         currentTime: 0,
         duration: 0,
@@ -28,6 +28,10 @@ domready(() => {
     }
 
     componentDidMount() {
+      this.setState({
+        isPlaying: !this.player.isPaused,
+        isMuted: this.player.isMuted,
+      });
       window.addEventListener('resize', this.handleResize);
     }
 
@@ -76,7 +80,7 @@ domready(() => {
 
     render() {
       return (
-        <div style={{position: 'absolute', width:' 100%', height: '100%'}}>
+        <div style={{position: 'absolute', width: ' 100%', height: '100%'}}>
 
           <TestComponent
             ref={p => this.player = p}
@@ -98,7 +102,7 @@ domready(() => {
             <button style={{width: 70}} onClick={this.toggleMute}> {this.state.isMuted ? 'Unmute' : 'Mute'} </button>
             <time>{this.state.currentTime} / {this.state.duration}</time>
           </nav>
-          
+
         </div>
       )
     }

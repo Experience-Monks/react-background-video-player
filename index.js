@@ -4,9 +4,10 @@ import {BackgroundCover} from 'background-cover';
 import playInlineVideo from 'iphone-inline-video';
 import insertRule from 'insert-rule';
 
+const iOSNavigator = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+const iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
 
 class BackgroundVideo extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -16,9 +17,12 @@ class BackgroundVideo extends Component {
 
   componentDidMount() {
     if (this.props.playsInline) {
-      playInlineVideo(this.video);
+      let hasAudio = !(iOSVersion && iOSVersion < 10 && this.props.autoPlay && this.props.muted); // allow auto play on iOS < 10
+      let requireInteractionOnTablet = false;
+
+      playInlineVideo(this.video, hasAudio, requireInteractionOnTablet);
       insertRule([
-          'video::-webkit-media-controls-start-playback-button', 
+          'video::-webkit-media-controls-start-playback-button',
           '.IIV::-webkit-media-controls-play-button'
         ], {
           display: 'none',
@@ -43,15 +47,15 @@ class BackgroundVideo extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.containerWidth !== nextProps.containerWidth || 
-        this.props.containerHeight !== nextProps.containerHeight) {
+    if (this.props.containerWidth !== nextProps.containerWidth ||
+      this.props.containerHeight !== nextProps.containerHeight) {
       this._resize();
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return true; // add conditions when needed
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return true; // add conditions when needed
+  // }
 
   _handleVideoReady = () => {
     this._resize();
@@ -83,7 +87,7 @@ class BackgroundVideo extends Component {
     if (this.video.currentTime < this.props.startTime) {
       this.setCurrentTime(this.props.startTime);
     }
-  }
+  };
 
   play = () => {
     this.video.play();
@@ -95,6 +99,10 @@ class BackgroundVideo extends Component {
 
   togglePlay = () => {
     this.video.paused ? this.play() : this.pause();
+  };
+
+  isPaused = () => {
+    return this.video.paused;
   };
 
   mute = () => {
@@ -111,6 +119,10 @@ class BackgroundVideo extends Component {
     this.video.muted ? this.unmute() : this.mute();
   };
 
+  isMuted = () => {
+    return this.video.muted;
+  };
+
   setCurrentTime = (val) => {
     this.video.currentTime = val;
   };
@@ -119,9 +131,9 @@ class BackgroundVideo extends Component {
     let className = 'BackgroundVideo';
     let visibility = this.state.visible ? 'visible' : 'hidden';
     let style = Object.assign({
-      position: 'absolute', 
-      width: '100%', 
-      height: '100%', 
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
       visibility
     }, this.props.style);
 
@@ -151,8 +163,8 @@ class BackgroundVideo extends Component {
 }
 
 BackgroundVideo.propTypes = {
-  playsInline: PropTypes.bool,
-  disableBackgroundCover: PropTypes.bool,
+  playsInline: PropTypes.bool,            // play inline on iPhone. avoid triggering native video player
+  disableBackgroundCover: PropTypes.bool, // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
   style: PropTypes.object,
   className: PropTypes.string,
   containerWidth: PropTypes.number.isRequired,
@@ -162,7 +174,7 @@ BackgroundVideo.propTypes = {
   horizontalAlign: PropTypes.number,
   verticalAlign: PropTypes.number,
   preload: PropTypes.string,
-  muted: PropTypes.bool,
+  muted: PropTypes.bool,   // required to be set to true for auto play on mobile in combination with 'autoPlay' option
   loop: PropTypes.bool,
   autoPlay: PropTypes.bool,
   startTime: PropTypes.number,
