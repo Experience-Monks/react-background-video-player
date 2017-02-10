@@ -1,6 +1,6 @@
 'use strict';
-import React, {Component, PropTypes} from 'react';
-import {BackgroundCover} from 'background-cover';
+import React, { Component, PropTypes } from 'react';
+import { BackgroundCover } from 'background-cover';
 import playInlineVideo from 'iphone-inline-video';
 import insertRule from 'insert-rule';
 
@@ -17,7 +17,7 @@ class BackgroundVideo extends Component {
 
   componentDidMount() {
     if (this.props.playsInline) {
-      let hasAudio = !(iOSVersion && iOSVersion < 10 && this.props.autoPlay && this.props.muted); // allow auto play on iOS < 10
+      let hasAudio = !(iOSVersion && iOSVersion < 10 && this.props.autoPlay && this.props.muted); // allow auto play on iOS < 10 for silent videos
       let requireInteractionOnTablet = false;
 
       playInlineVideo(this.video, hasAudio, requireInteractionOnTablet);
@@ -52,10 +52,6 @@ class BackgroundVideo extends Component {
       this._resize();
     }
   }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return true; // add conditions when needed
-  // }
 
   _handleVideoReady = () => {
     this._resize();
@@ -137,8 +133,10 @@ class BackgroundVideo extends Component {
       visibility
     }, this.props.style);
 
-    let extraProps = {};
-    if (this.props.playsInline) extraProps.playsInline = true;
+    let extraVideoElementProps = Object.assign(this.props.extraVideoElementProps, {});
+    if (this.props.playsInline) {
+      extraVideoElementProps.playsInline = true;
+    }
 
     return (
       <div
@@ -155,7 +153,7 @@ class BackgroundVideo extends Component {
           loop={this.props.loop}
           onTimeUpdate={this._handleTimeUpdate}
           onEnded={this._handleVideoEnd}
-          {...extraProps}
+          {...extraVideoElementProps}
         />
       </div>
     )
@@ -163,8 +161,8 @@ class BackgroundVideo extends Component {
 }
 
 BackgroundVideo.propTypes = {
-  playsInline: PropTypes.bool,            // play inline on iPhone. avoid triggering native video player
-  disableBackgroundCover: PropTypes.bool, // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
+  playsInline: PropTypes.bool,             // play inline on iPhone. avoid triggering native video player
+  disableBackgroundCover: PropTypes.bool,  // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
   style: PropTypes.object,
   className: PropTypes.string,
   containerWidth: PropTypes.number.isRequired,
@@ -177,6 +175,7 @@ BackgroundVideo.propTypes = {
   muted: PropTypes.bool,   // required to be set to true for auto play on mobile in combination with 'autoPlay' option
   loop: PropTypes.bool,
   autoPlay: PropTypes.bool,
+  extraVideoElementProps: PropTypes.object,
   startTime: PropTypes.number,
   onReady: PropTypes.func,
   onPlay: PropTypes.func,
@@ -199,6 +198,7 @@ BackgroundVideo.defaultProps = {
   muted: true,
   loop: true,
   autoPlay: true,
+  extraVideoElementProps: {},
   startTime: 0,
   onReady: f => f,
   onPlay: f => f,
