@@ -143,6 +143,7 @@ class BackgroundVideo extends Component {
         ref={c => this.container = c}
         className={`${className} ${this.props.className}`}
         style={style}
+        onClick={this.props.onClick}
       >
         <video
           ref={v => this.video = v}
@@ -184,6 +185,7 @@ BackgroundVideo.propTypes = {
   onUnmute: PropTypes.func,
   onTimeUpdate: PropTypes.func,
   onEnd: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
 BackgroundVideo.defaultProps = {
@@ -207,6 +209,7 @@ BackgroundVideo.defaultProps = {
   onUnmute: f => f,
   onTimeUpdate: f => f,
   onEnd: f => f,
+  onClick: f => f,
 };
 
 export default BackgroundVideo;
