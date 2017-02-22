@@ -145,7 +145,7 @@ class BackgroundVideo extends Component {
         style={style}
         onClick={this.props.onClick}
         onKeyPress={this.props.onKeyPress}
-        tabindex={this.props.tabIndex}
+        tabIndex={this.props.tabIndex}
       >
         <video
           ref={v => this.video = v}
