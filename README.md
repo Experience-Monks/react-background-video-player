@@ -26,13 +26,16 @@ In your terminal go to component folder and run ```npm t```
   autoPlay: PropTypes.bool,
   extraVideoElementProps: PropTypes.object,
   startTime: PropTypes.number,
+  tabIndex: PropTypes.number,
   onReady: PropTypes.func,
   onPlay: PropTypes.func,
   onPause: PropTypes.func,
   onMute: PropTypes.func,
   onUnmute: PropTypes.func,
   onTimeUpdate: PropTypes.func,
-  onEnd: PropTypes.func
+  onEnd: PropTypes.func,
+  onClick: f => f,
+  onKeyPress: f => f
 }
 ```
 
@@ -51,6 +54,7 @@ In your terminal go to component folder and run ```npm t```
   loop: true,
   autoPlay: true,
   startTime: 0,
+  tabIndex: 0,
   extraVideoElementProps: {}
 }
 ```

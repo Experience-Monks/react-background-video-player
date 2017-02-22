@@ -144,6 +144,8 @@ class BackgroundVideo extends Component {
         className={`${className} ${this.props.className}`}
         style={style}
         onClick={this.props.onClick}
+        onKeyPress={this.props.onKeyPress}
+        tabindex={this.props.tabIndex}
       >
         <video
           ref={v => this.video = v}
@@ -178,6 +180,7 @@ BackgroundVideo.propTypes = {
   autoPlay: PropTypes.bool,
   extraVideoElementProps: PropTypes.object,
   startTime: PropTypes.number,
+  tabIndex: PropTypes.number,
   onReady: PropTypes.func,
   onPlay: PropTypes.func,
   onPause: PropTypes.func,
@@ -186,6 +189,7 @@ BackgroundVideo.propTypes = {
   onTimeUpdate: PropTypes.func,
   onEnd: PropTypes.func,
   onClick: PropTypes.func,
+  onKeyPress: PropTypes.func,
 };
 
 BackgroundVideo.defaultProps = {
@@ -202,6 +206,7 @@ BackgroundVideo.defaultProps = {
   autoPlay: true,
   extraVideoElementProps: {},
   startTime: 0,
+  tabIndex: 0,
   onReady: f => f,
   onPlay: f => f,
   onPause: f => f,
@@ -210,6 +215,7 @@ BackgroundVideo.defaultProps = {
   onTimeUpdate: f => f,
   onEnd: f => f,
   onClick: f => f,
+  onKeyPress: f => f,
 };
 
 export default BackgroundVideo;
