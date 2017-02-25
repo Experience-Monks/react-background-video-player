@@ -10,8 +10,8 @@ In your terminal go to component folder and run ```npm t```
 ## Component Props
 ```javascript
 {
-  playsInline: PropTypes.bool,            // play inline on iPhone. avoid triggering native video player
-  disableBackgroundCover: PropTypes.bool, // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
+  playsInline: PropTypes.bool,             // play inline on iPhone. avoid triggering native video player
+  disableBackgroundCover: PropTypes.bool,  // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
   style: PropTypes.object,
   className: PropTypes.string,
   containerWidth: PropTypes.number.isRequired,
@@ -27,15 +27,16 @@ In your terminal go to component folder and run ```npm t```
   extraVideoElementProps: PropTypes.object,
   startTime: PropTypes.number,
   tabIndex: PropTypes.number,
-  onReady: PropTypes.func,
+  shouldComponentUpdate: PropTypes.bool,
+  onReady: PropTypes.func, // passes back `duration`
   onPlay: PropTypes.func,
   onPause: PropTypes.func,
   onMute: PropTypes.func,
   onUnmute: PropTypes.func,
-  onTimeUpdate: PropTypes.func,
+  onTimeUpdate: PropTypes.func, // passes back `currentTime`, `progress` and `duration`
   onEnd: PropTypes.func,
-  onClick: f => f,
-  onKeyPress: f => f
+  onClick: PropTypes.func,
+  onKeyPress: PropTypes.func
 }
 ```
 
@@ -53,10 +54,11 @@ In your terminal go to component folder and run ```npm t```
   muted: true,
   loop: true,
   autoPlay: true,
+  extraVideoElementProps: {},
   startTime: 0,
   tabIndex: 0,
-  extraVideoElementProps: {}
-}
+  shouldComponentUpdate: true
+};
 ```
 
 ## API

@@ -53,12 +53,17 @@ class BackgroundVideo extends Component {
     }
   }
 
+  shouldComponentUpdate(nextState, nextProps) {
+    return this.props.shouldComponentUpdate;
+  }
+
   _handleVideoReady = () => {
+    let duration = Math.round(this.video.duration);
     this._resize();
     this.setCurrentTime(this.props.startTime);
     this.props.autoPlay && this.play();
     this.setState({visible: true});
-    this.props.onReady();
+    this.props.onReady(duration);
   };
 
   _resize = () => {
@@ -181,12 +186,13 @@ BackgroundVideo.propTypes = {
   extraVideoElementProps: PropTypes.object,
   startTime: PropTypes.number,
   tabIndex: PropTypes.number,
-  onReady: PropTypes.func,
+  shouldComponentUpdate: PropTypes.bool,
+  onReady: PropTypes.func, // passes back `duration`
   onPlay: PropTypes.func,
   onPause: PropTypes.func,
   onMute: PropTypes.func,
   onUnmute: PropTypes.func,
-  onTimeUpdate: PropTypes.func,
+  onTimeUpdate: PropTypes.func, // passes back `currentTime`, `progress` and `duration`
   onEnd: PropTypes.func,
   onClick: PropTypes.func,
   onKeyPress: PropTypes.func,
@@ -207,6 +213,7 @@ BackgroundVideo.defaultProps = {
   extraVideoElementProps: {},
   startTime: 0,
   tabIndex: 0,
+  shouldComponentUpdate: true,
   onReady: f => f,
   onPlay: f => f,
   onPause: f => f,
