@@ -58,7 +58,7 @@ class BackgroundVideo extends Component {
   }
 
   _handleVideoReady = () => {
-    let duration = Math.round(this.video.duration);
+    let duration = this.video.duration;
     this._resize();
     this.setCurrentTime(this.props.startTime);
     this.props.autoPlay && this.play();
@@ -74,8 +74,8 @@ class BackgroundVideo extends Component {
 
   _handleTimeUpdate = () => {
     this._handleIOSStartTime();
-    let currentTime = Math.round(this.video.currentTime);
-    let duration = Math.round(this.video.duration);
+    let currentTime = this.video.currentTime;
+    let duration = this.video.duration;
     let progress = currentTime / duration;
     this.props.onTimeUpdate(currentTime, progress, duration);
   };
