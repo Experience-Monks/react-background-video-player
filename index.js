@@ -13,6 +13,7 @@ class BackgroundVideo extends Component {
     this.state = {
       visible: false,
     };
+    this.startTimeIsSet = false;
   }
 
   componentDidMount() {
@@ -73,7 +74,7 @@ class BackgroundVideo extends Component {
   };
 
   _handleTimeUpdate = () => {
-    this._handleIOSStartTime();
+    iOSVersion && this._handleIOSStartTime();
     let currentTime = this.video.currentTime;
     let duration = this.video.duration;
     let progress = currentTime / duration;
@@ -86,7 +87,10 @@ class BackgroundVideo extends Component {
 
   _handleIOSStartTime = () => {
     if (this.video.currentTime < this.props.startTime) {
-      this.setCurrentTime(this.props.startTime);
+      if (!this.startTimeIsSet) {
+        this.setCurrentTime(this.props.startTime);
+        this.startTimeIsSet = true;
+      }
     }
   };
 
