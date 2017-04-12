@@ -1,6 +1,6 @@
 {
   "name": "react-background-video-player",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React background video component with simple player API. Supports inline play on iPhone.",
   "main": "index.js",
   "license": "MIT",
@@ -45,7 +45,9 @@
   "directories": {
     "example": "example"
   },
-   "browserify": {
-    "transform": [ "babelify" ]
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
   }
 }
