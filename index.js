@@ -54,7 +54,7 @@ class BackgroundVideo extends Component {
       this._resize();
     }
 
-    if(this.props.volume !== nextProps.volume){
+    if (this.props.volume !== nextProps.volume) {
       this.video.volume = nextProps.volume
     }
   }

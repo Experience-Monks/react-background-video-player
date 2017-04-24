@@ -23,6 +23,7 @@ In your terminal go to component folder and run ```npm t```
   preload: PropTypes.string,
   muted: PropTypes.bool,   // required to be set to true for auto play on mobile in combination with 'autoPlay' option
   loop: PropTypes.bool,
+  volume: PropTypes.number,
   autoPlay: PropTypes.bool,
   extraVideoElementProps: PropTypes.object,
   startTime: PropTypes.number,
@@ -53,6 +54,7 @@ In your terminal go to component folder and run ```npm t```
   preload: 'auto',
   muted: true,
   loop: true,
+  volume: 1,
   autoPlay: true,
   extraVideoElementProps: {},
   startTime: 0,
