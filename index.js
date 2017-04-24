@@ -39,6 +39,7 @@ class BackgroundVideo extends Component {
 
     this.video.addEventListener('play', this.props.onPlay);
     this.video.addEventListener('pause', this.props.onPause);
+    this.video.volume = this.props.volume;
   }
 
   componentWillUnmount() {
@@ -51,6 +52,10 @@ class BackgroundVideo extends Component {
     if (this.props.containerWidth !== nextProps.containerWidth ||
       this.props.containerHeight !== nextProps.containerHeight) {
       this._resize();
+    }
+
+    if(this.props.volume !== nextProps.volume){
+      this.video.volume = nextProps.volume
     }
   }
 
@@ -185,6 +190,7 @@ BackgroundVideo.propTypes = {
   verticalAlign: PropTypes.number,
   preload: PropTypes.string,
   muted: PropTypes.bool,   // required to be set to true for auto play on mobile in combination with 'autoPlay' option
+  volume: PropTypes.number,
   loop: PropTypes.bool,
   autoPlay: PropTypes.bool,
   extraVideoElementProps: PropTypes.object,
@@ -199,7 +205,7 @@ BackgroundVideo.propTypes = {
   onTimeUpdate: PropTypes.func, // passes back `currentTime`, `progress` and `duration`
   onEnd: PropTypes.func,
   onClick: PropTypes.func,
-  onKeyPress: PropTypes.func,
+  onKeyPress: PropTypes.func
 };
 
 BackgroundVideo.defaultProps = {
@@ -212,6 +218,7 @@ BackgroundVideo.defaultProps = {
   verticalAlign: 0.5,
   preload: 'auto',
   muted: true,
+  volume: 1,
   loop: true,
   autoPlay: true,
   extraVideoElementProps: {},
@@ -226,7 +233,7 @@ BackgroundVideo.defaultProps = {
   onTimeUpdate: f => f,
   onEnd: f => f,
   onClick: f => f,
-  onKeyPress: f => f,
+  onKeyPress: f => f
 };
 
 export default BackgroundVideo;
