@@ -1,6 +1,6 @@
 {
   "name": "react-background-video-player",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "React background video component with simple player API. Supports inline play on iPhone.",
   "main": "dist/index.js",
   "license": "MIT",
@@ -29,10 +29,10 @@
   "keywords": [
     "react",
     "video",
-    "react component",
-    "background video",
-    "video player",
-    "inline iPhone video"
+    "react-component",
+    "background-video",
+    "video-player",
+    "iPhone-inline-video"
   ],
   "repository": {
     "type": "git",
