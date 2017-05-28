@@ -1,23 +1,25 @@
 'use strict';
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
 import { BackgroundCover } from 'background-cover';
 import playInlineVideo from 'iphone-inline-video';
 import insertRule from 'insert-rule';
+import PropTypes from 'prop-types';
 
 const iOSNavigator = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
 const iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
 
-class BackgroundVideo extends Component {
+class BackgroundVideo extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
+      hasStarted: false
     };
     this.startTimeIsSet = false;
   }
 
   componentDidMount() {
-    if (this.props.playsInline) {
+    if (this.props.playsInline && iOSVersion) {
       let hasAudio = !(iOSVersion && iOSVersion < 10 && this.props.autoPlay && this.props.muted); // allow auto play on iOS < 10 for silent videos
       let requireInteractionOnTablet = false;
 
@@ -37,15 +39,15 @@ class BackgroundVideo extends Component {
       this._handleVideoReady();
     }
 
-    this.video.addEventListener('play', this.props.onPlay);
-    this.video.addEventListener('pause', this.props.onPause);
+    this.video.addEventListener('play', this._handleOnPlay);
+    this.video.addEventListener('pause', this._handleOnPause);
     this.video.volume = this.props.volume;
   }
 
   componentWillUnmount() {
     this.video.removeEventListener('loadedmetadata', this._handleVideoReady);
-    this.video.removeEventListener('play', this.props.onPlay);
-    this.video.removeEventListener('pause', this.props.onPause);
+    this.video.removeEventListener('play', this._handleOnPlay);
+    this.video.removeEventListener('pause', this._handleOnPause);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -76,6 +78,15 @@ class BackgroundVideo extends Component {
     if (!this.props.disableBackgroundCover) {
       BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
     }
+  };
+
+  _handleOnPlay = () => {
+    if (!this.state.hasStarted) this.setState({hasStarted: true});
+    this.props.onPlay();
+  };
+
+  _handleOnPause = () => {
+    this.props.onPause();
   };
 
   _handleTimeUpdate = () => {
@@ -138,40 +149,53 @@ class BackgroundVideo extends Component {
   };
 
   render() {
-    let className = 'BackgroundVideo';
-    let visibility = this.state.visible ? 'visible' : 'hidden';
-    let style = Object.assign({
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      visibility
-    }, this.props.style);
+    const props = this.props;
+    const state = this.state;
 
-    let extraVideoElementProps = Object.assign(this.props.extraVideoElementProps, {});
-    if (this.props.playsInline) {
-      extraVideoElementProps.playsInline = true;
-    }
+    const absolute100 = {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%'
+    };
+
+    const className = 'BackgroundVideo';
+    const visibility = state.visible ? 'visible' : 'hidden';
+    const style = Object.assign({...absolute100, visibility}, props.style);
+
+    let extraVideoElementProps = Object.assign(props.extraVideoElementProps, {
+      playsInline: props.playsInline
+    });
 
     return (
       <div
         ref={c => this.container = c}
-        className={`${className} ${this.props.className}`}
+        className={`${className} ${props.className}`}
         style={style}
-        onClick={this.props.onClick}
-        onKeyPress={this.props.onKeyPress}
-        tabIndex={this.props.tabIndex}
+        onClick={props.onClick}
+        onKeyPress={props.onKeyPress}
+        tabIndex={props.tabIndex}
       >
         <video
           ref={v => this.video = v}
-          src={this.props.src}
-          poster={this.props.poster}
-          preload={this.props.preload}
-          muted={this.props.muted}
-          loop={this.props.loop}
+          src={props.src}
+          preload={props.preload}
+          muted={props.muted}
+          loop={props.loop}
           onTimeUpdate={this._handleTimeUpdate}
           onEnded={this._handleVideoEnd}
           {...extraVideoElementProps}
         />
+        {
+          (props.poster && !state.hasStarted) &&
+          <div style={{
+            ...absolute100,
+            background: `url('${props.poster}') center center`,
+            backgroundSize: 'cover'
+          }}
+          />
+        }
       </div>
     )
   }

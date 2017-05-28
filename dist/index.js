@@ -1,0 +1,321 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _backgroundCover = require('background-cover');
+
+var _iphoneInlineVideo = require('iphone-inline-video');
+
+var _iphoneInlineVideo2 = _interopRequireDefault(_iphoneInlineVideo);
+
+var _insertRule = require('insert-rule');
+
+var _insertRule2 = _interopRequireDefault(_insertRule);
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var iOSNavigator = navigator.appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/);
+var iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
+
+var BackgroundVideo = function (_PureComponent) {
+  _inherits(BackgroundVideo, _PureComponent);
+
+  function BackgroundVideo(props) {
+    _classCallCheck(this, BackgroundVideo);
+
+    var _this = _possibleConstructorReturn(this, (BackgroundVideo.__proto__ || Object.getPrototypeOf(BackgroundVideo)).call(this, props));
+
+    _this._handleVideoReady = function () {
+      var duration = _this.video.duration;
+      _this._resize();
+      _this.setCurrentTime(_this.props.startTime);
+      _this.props.autoPlay && _this.play();
+      _this.setState({ visible: true });
+      _this.props.onReady(duration);
+    };
+
+    _this._resize = function () {
+      if (!_this.props.disableBackgroundCover) {
+        (0, _backgroundCover.BackgroundCover)(_this.video, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
+      }
+    };
+
+    _this._handleOnPlay = function () {
+      if (!_this.state.hasStarted) _this.setState({ hasStarted: true });
+      _this.props.onPlay();
+    };
+
+    _this._handleOnPause = function () {
+      _this.props.onPause();
+    };
+
+    _this._handleTimeUpdate = function () {
+      iOSVersion && _this._handleIOSStartTime();
+      var currentTime = _this.video.currentTime;
+      var duration = _this.video.duration;
+      var progress = currentTime / duration;
+      _this.props.onTimeUpdate(currentTime, progress, duration);
+    };
+
+    _this._handleVideoEnd = function () {
+      _this.props.onEnd();
+    };
+
+    _this._handleIOSStartTime = function () {
+      if (_this.video.currentTime < _this.props.startTime) {
+        if (!_this.startTimeIsSet) {
+          _this.setCurrentTime(_this.props.startTime);
+          _this.startTimeIsSet = true;
+        }
+      }
+    };
+
+    _this.play = function () {
+      _this.video.play();
+    };
+
+    _this.pause = function () {
+      _this.video.pause();
+    };
+
+    _this.togglePlay = function () {
+      _this.video.paused ? _this.play() : _this.pause();
+    };
+
+    _this.isPaused = function () {
+      return _this.video.paused;
+    };
+
+    _this.mute = function () {
+      _this.video.muted = true;
+      _this.props.onMute();
+    };
+
+    _this.unmute = function () {
+      _this.video.muted = false;
+      _this.props.onUnmute();
+    };
+
+    _this.toggleMute = function () {
+      _this.video.muted ? _this.unmute() : _this.mute();
+    };
+
+    _this.isMuted = function () {
+      return _this.video.muted;
+    };
+
+    _this.setCurrentTime = function (val) {
+      _this.video.currentTime = val;
+    };
+
+    _this.state = {
+      visible: false,
+      hasStarted: false
+    };
+    _this.startTimeIsSet = false;
+    return _this;
+  }
+
+  _createClass(BackgroundVideo, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      if (this.props.playsInline && iOSVersion) {
+        var hasAudio = !(iOSVersion && iOSVersion < 10 && this.props.autoPlay && this.props.muted); // allow auto play on iOS < 10 for silent videos
+        var requireInteractionOnTablet = false;
+
+        (0, _iphoneInlineVideo2.default)(this.video, hasAudio, requireInteractionOnTablet);
+        (0, _insertRule2.default)(['video::-webkit-media-controls-start-playback-button', '.IIV::-webkit-media-controls-play-button'], {
+          display: 'none'
+        });
+      }
+
+      if (this.video.readyState !== 4) {
+        this.video.addEventListener('loadedmetadata', this._handleVideoReady);
+      } else {
+        this._handleVideoReady();
+      }
+
+      this.video.addEventListener('play', this._handleOnPlay);
+      this.video.addEventListener('pause', this._handleOnPause);
+      this.video.volume = this.props.volume;
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      this.video.removeEventListener('loadedmetadata', this._handleVideoReady);
+      this.video.removeEventListener('play', this._handleOnPlay);
+      this.video.removeEventListener('pause', this._handleOnPause);
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (this.props.containerWidth !== nextProps.containerWidth || this.props.containerHeight !== nextProps.containerHeight) {
+        this._resize();
+      }
+
+      if (this.props.volume !== nextProps.volume) {
+        this.video.volume = nextProps.volume;
+      }
+    }
+  }, {
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextState, nextProps) {
+      return this.props.shouldComponentUpdate;
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      var props = this.props;
+      var state = this.state;
+
+      var absolute100 = {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%'
+      };
+
+      var className = 'BackgroundVideo';
+      var visibility = state.visible ? 'visible' : 'hidden';
+      var style = Object.assign(_extends({}, absolute100, { visibility: visibility }), props.style);
+
+      var extraVideoElementProps = Object.assign(props.extraVideoElementProps, {
+        playsInline: props.playsInline
+      });
+
+      return _react2.default.createElement(
+        'div',
+        {
+          ref: function ref(c) {
+            return _this2.container = c;
+          },
+          className: className + ' ' + props.className,
+          style: style,
+          onClick: props.onClick,
+          onKeyPress: props.onKeyPress,
+          tabIndex: props.tabIndex
+        },
+        _react2.default.createElement('video', _extends({
+          ref: function ref(v) {
+            return _this2.video = v;
+          },
+          src: props.src,
+          preload: props.preload,
+          muted: props.muted,
+          loop: props.loop,
+          onTimeUpdate: this._handleTimeUpdate,
+          onEnded: this._handleVideoEnd
+        }, extraVideoElementProps)),
+        props.poster && !state.hasStarted && _react2.default.createElement('div', { style: _extends({}, absolute100, {
+            background: 'url(\'' + props.poster + '\') center center',
+            backgroundSize: 'cover'
+          })
+        })
+      );
+    }
+  }]);
+
+  return BackgroundVideo;
+}(_react.PureComponent);
+
+BackgroundVideo.propTypes = {
+  playsInline: _propTypes2.default.bool, // play inline on iPhone. avoid triggering native video player
+  disableBackgroundCover: _propTypes2.default.bool, // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
+  style: _propTypes2.default.object,
+  className: _propTypes2.default.string,
+  containerWidth: _propTypes2.default.number.isRequired,
+  containerHeight: _propTypes2.default.number.isRequired,
+  src: _propTypes2.default.string.isRequired,
+  poster: _propTypes2.default.string,
+  horizontalAlign: _propTypes2.default.number,
+  verticalAlign: _propTypes2.default.number,
+  preload: _propTypes2.default.string,
+  muted: _propTypes2.default.bool, // required to be set to true for auto play on mobile in combination with 'autoPlay' option
+  volume: _propTypes2.default.number,
+  loop: _propTypes2.default.bool,
+  autoPlay: _propTypes2.default.bool,
+  extraVideoElementProps: _propTypes2.default.object,
+  startTime: _propTypes2.default.number,
+  tabIndex: _propTypes2.default.number,
+  shouldComponentUpdate: _propTypes2.default.bool,
+  onReady: _propTypes2.default.func, // passes back `duration`
+  onPlay: _propTypes2.default.func,
+  onPause: _propTypes2.default.func,
+  onMute: _propTypes2.default.func,
+  onUnmute: _propTypes2.default.func,
+  onTimeUpdate: _propTypes2.default.func, // passes back `currentTime`, `progress` and `duration`
+  onEnd: _propTypes2.default.func,
+  onClick: _propTypes2.default.func,
+  onKeyPress: _propTypes2.default.func
+};
+
+BackgroundVideo.defaultProps = {
+  playsInline: true,
+  disableBackgroundCover: false,
+  style: {},
+  className: '',
+  poster: '',
+  horizontalAlign: 0.5,
+  verticalAlign: 0.5,
+  preload: 'auto',
+  muted: true,
+  volume: 1,
+  loop: true,
+  autoPlay: true,
+  extraVideoElementProps: {},
+  startTime: 0,
+  tabIndex: 0,
+  shouldComponentUpdate: true,
+  onReady: function onReady(f) {
+    return f;
+  },
+  onPlay: function onPlay(f) {
+    return f;
+  },
+  onPause: function onPause(f) {
+    return f;
+  },
+  onMute: function onMute(f) {
+    return f;
+  },
+  onUnmute: function onUnmute(f) {
+    return f;
+  },
+  onTimeUpdate: function onTimeUpdate(f) {
+    return f;
+  },
+  onEnd: function onEnd(f) {
+    return f;
+  },
+  onClick: function onClick(f) {
+    return f;
+  },
+  onKeyPress: function onKeyPress(f) {
+    return f;
+  }
+};
+
+exports.default = BackgroundVideo;

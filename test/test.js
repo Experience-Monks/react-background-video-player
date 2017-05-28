@@ -1,9 +1,7 @@
-'use strict';
-import 'babel-polyfill';
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import domready from 'domready';
-import TestComponent from  '../index.js' ;
+import TestComponent from  '../index.js';
 
 document.body.style.position = 'absolute';
 document.body.style.margin = 0;
@@ -81,7 +79,6 @@ domready(() => {
     render() {
       return (
         <div style={{position: 'absolute', width: ' 100%', height: '100%'}}>
-
           <TestComponent
             ref={p => this.player = p}
             containerWidth={this.state.windowWidth}
@@ -94,15 +91,25 @@ domready(() => {
             onUnmute={this.handleOnUnmute}
             onTimeUpdate={this.handleTimeUpdate}
             startTime={10}
+            autoPlay={false}
+            volume={0.5}
           />
-
-          <nav style={{position: 'absolute', left: 30, bottom: 30, display: 'flex', alignItems: 'center'}}>
-            <button style={{width: 70}} onClick={this.togglePlay}> {this.state.isPlaying ? 'Pause' : 'Play'} </button>
+          <nav style={{
+            position: 'absolute',
+            left: 30,
+            bottom: 30,
+            display: 'flex',
+            alignItems: 'center',
+          }}>
+            <button style={{width: 70}} onClick={this.togglePlay}>
+              {this.state.isPlaying ? 'Pause' : 'Play'}
+            </button>
             <progress value={this.state.progress}/>
-            <button style={{width: 70}} onClick={this.toggleMute}> {this.state.isMuted ? 'Unmute' : 'Mute'} </button>
+            <button style={{width: 70}} onClick={this.toggleMute}>
+              {this.state.isMuted ? 'Unmute' : 'Mute'}
+            </button>
             <time>{this.state.currentTime} / {this.state.duration}</time>
           </nav>
-
         </div>
       )
     }
