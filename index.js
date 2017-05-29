@@ -167,7 +167,17 @@ class BackgroundVideo extends PureComponent {
     let extraVideoElementProps = Object.assign(props.extraVideoElementProps, {
       playsInline: props.playsInline
     });
-
+	const videoProps = {
+	  ref: v => this.video = v,
+	  src: typeof props.src === 'string' ? props.src : null,
+	  preload: props.preload,
+	  muted: props.muted,
+	  loop: props.loop,
+	  onTimeUpdate: this._handleTimeUpdate,
+	  onEnded: this._handleVideoEnd,
+	  ...extraVideoElementProps
+    };
+	console.log(typeof props.src);
     return (
       <div
         ref={c => this.container = c}
@@ -177,16 +187,16 @@ class BackgroundVideo extends PureComponent {
         onKeyPress={props.onKeyPress}
         tabIndex={props.tabIndex}
       >
-        <video
-          ref={v => this.video = v}
-          src={props.src}
-          preload={props.preload}
-          muted={props.muted}
-          loop={props.loop}
-          onTimeUpdate={this._handleTimeUpdate}
-          onEnded={this._handleVideoEnd}
-          {...extraVideoElementProps}
-        />
+		{typeof props.src === 'object' && props.src.length > 1 ? (
+		  <video {...videoProps}>
+			{props.src.map((source) => (
+			  <source {...source} />
+			))}
+		  </video>
+		) : (
+		  <video {...videoProps} />
+		)}
+
         {
           (props.poster && !state.hasStarted) &&
           <div style={{
@@ -197,7 +207,7 @@ class BackgroundVideo extends PureComponent {
           />
         }
       </div>
-    )
+    );
   }
 }
 
@@ -208,7 +218,10 @@ BackgroundVideo.propTypes = {
   className: PropTypes.string,
   containerWidth: PropTypes.number.isRequired,
   containerHeight: PropTypes.number.isRequired,
-  src: PropTypes.string.isRequired,
+  src: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.array
+  ]).isRequired,
   poster: PropTypes.string,
   horizontalAlign: PropTypes.number,
   verticalAlign: PropTypes.number,
