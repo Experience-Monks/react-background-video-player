@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -34,7 +36,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var iOSNavigator = navigator.appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/);
+var iOSNavigator = typeof navigator !== 'undefined' && navigator.appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/);
 var iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
 
 var BackgroundVideo = function (_PureComponent) {
@@ -205,7 +207,18 @@ var BackgroundVideo = function (_PureComponent) {
       var extraVideoElementProps = Object.assign(props.extraVideoElementProps, {
         playsInline: props.playsInline
       });
-
+      var videoProps = _extends({
+        ref: function ref(v) {
+          return _this2.video = v;
+        },
+        src: typeof props.src === 'string' ? props.src : null,
+        preload: props.preload,
+        muted: props.muted,
+        loop: props.loop,
+        onTimeUpdate: this._handleTimeUpdate,
+        onEnded: this._handleVideoEnd
+      }, extraVideoElementProps);
+      console.log(_typeof(props.src));
       return _react2.default.createElement(
         'div',
         {
@@ -218,17 +231,13 @@ var BackgroundVideo = function (_PureComponent) {
           onKeyPress: props.onKeyPress,
           tabIndex: props.tabIndex
         },
-        _react2.default.createElement('video', _extends({
-          ref: function ref(v) {
-            return _this2.video = v;
-          },
-          src: props.src,
-          preload: props.preload,
-          muted: props.muted,
-          loop: props.loop,
-          onTimeUpdate: this._handleTimeUpdate,
-          onEnded: this._handleVideoEnd
-        }, extraVideoElementProps)),
+        _typeof(props.src) === 'object' && props.src.length > 1 ? _react2.default.createElement(
+          'video',
+          videoProps,
+          props.src.map(function (source) {
+            return _react2.default.createElement('source', source);
+          })
+        ) : _react2.default.createElement('video', videoProps),
         props.poster && !state.hasStarted && _react2.default.createElement('div', { style: _extends({}, absolute100, {
             background: 'url(\'' + props.poster + '\') center center',
             backgroundSize: 'cover'
@@ -248,7 +257,7 @@ BackgroundVideo.propTypes = {
   className: _propTypes2.default.string,
   containerWidth: _propTypes2.default.number.isRequired,
   containerHeight: _propTypes2.default.number.isRequired,
-  src: _propTypes2.default.string.isRequired,
+  src: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.array]).isRequired,
   poster: _propTypes2.default.string,
   horizontalAlign: _propTypes2.default.number,
   verticalAlign: _propTypes2.default.number,
