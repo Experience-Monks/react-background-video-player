@@ -5,7 +5,7 @@ import playInlineVideo from 'iphone-inline-video';
 import insertRule from 'insert-rule';
 import PropTypes from 'prop-types';
 
-const iOSNavigator = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+const iOSNavigator = typeof navigator !== 'undefined' && (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
 const iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
 
 class BackgroundVideo extends PureComponent {
