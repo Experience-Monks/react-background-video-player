@@ -218,7 +218,7 @@ var BackgroundVideo = function (_PureComponent) {
         onTimeUpdate: this._handleTimeUpdate,
         onEnded: this._handleVideoEnd
       }, extraVideoElementProps);
-      console.log(_typeof(props.src));
+
       return _react2.default.createElement(
         'div',
         {
