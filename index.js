@@ -189,8 +189,8 @@ class BackgroundVideo extends PureComponent {
       >
 		{typeof props.src === 'object' && props.src.length > 1 ? (
 		  <video {...videoProps}>
-			{props.src.map((source) => (
-			  <source {...source} />
+			{props.src.map((source, key) => (
+			  <source key={key} {...source} />
 			))}
 		  </video>
 		) : (

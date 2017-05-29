@@ -234,8 +234,8 @@ var BackgroundVideo = function (_PureComponent) {
         _typeof(props.src) === 'object' && props.src.length > 1 ? _react2.default.createElement(
           'video',
           videoProps,
-          props.src.map(function (source) {
-            return _react2.default.createElement('source', source);
+          props.src.map(function (source, key) {
+            return _react2.default.createElement('source', _extends({ key: key }, source));
           })
         ) : _react2.default.createElement('video', videoProps),
         props.poster && !state.hasStarted && _react2.default.createElement('div', { style: _extends({}, absolute100, {
