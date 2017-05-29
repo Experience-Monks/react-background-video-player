@@ -24,6 +24,7 @@
   },
   "scripts": {
     "test": "budo test/test.js --live  --open -- -t [ babelify --presets [ es2015 react stage-1] ]",
+    "test-sources": "budo test/testSources.js --live  --open -- -t [ babelify --presets [ es2015 react stage-1] ]",
     "build": "babel index.js -d dist --presets es2015,react,stage-1"
   },
   "keywords": [
