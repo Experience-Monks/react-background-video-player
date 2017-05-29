@@ -177,7 +177,7 @@ class BackgroundVideo extends PureComponent {
 	  onEnded: this._handleVideoEnd,
 	  ...extraVideoElementProps
     };
-	console.log(typeof props.src);
+	
     return (
       <div
         ref={c => this.container = c}
