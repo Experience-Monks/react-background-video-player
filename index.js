@@ -175,9 +175,10 @@ class BackgroundVideo extends PureComponent {
 	  loop: props.loop,
 	  onTimeUpdate: this._handleTimeUpdate,
 	  onEnded: this._handleVideoEnd,
+	  poster: !state.hasStarted && props.poster || '',
 	  ...extraVideoElementProps
     };
-	
+
     return (
       <div
         ref={c => this.container = c}
