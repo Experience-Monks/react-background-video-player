@@ -6,7 +6,7 @@ React background video component with simple player API. Supports inline play on
 
 ## Run example
 In your terminal go to component folder and run ```npm t```
- 
+
 ## Component Props
 ```javascript
 {
@@ -16,7 +16,10 @@ In your terminal go to component folder and run ```npm t```
   className: PropTypes.string,
   containerWidth: PropTypes.number.isRequired,
   containerHeight: PropTypes.number.isRequired,
-  src: PropTypes.string.isRequired,
+  src: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.array // check test/testSources.js to see an example
+  ]).isRequired,
   poster: PropTypes.string,
   horizontalAlign: PropTypes.number,
   verticalAlign: PropTypes.number,
@@ -74,4 +77,4 @@ In your terminal go to component folder and run ```npm t```
 * ```isMuted``` - get mute state
 * ```setCurrentTime```
 
-Also refer to [example](https://github.com/Jam3/react-background-video-player/blob/master/example/example.js) 
+Also refer to [example](https://github.com/Jam3/react-background-video-player/blob/master/example/example.js)
