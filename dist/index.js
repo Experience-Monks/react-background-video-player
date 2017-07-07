@@ -52,13 +52,19 @@ var BackgroundVideo = function (_PureComponent) {
       _this._resize();
       _this.setCurrentTime(_this.props.startTime);
       _this.props.autoPlay && _this.play();
-      _this.setState({ visible: true });
       _this.props.onReady(duration);
+      !_this.poster && _this.setState({ visible: true });
+    };
+
+    _this._handlePosterReady = function () {
+      _this._resize();
+      _this.setState({ visible: true });
     };
 
     _this._resize = function () {
       if (!_this.props.disableBackgroundCover) {
         (0, _backgroundCover.BackgroundCover)(_this.video, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
+        _this.poster && (0, _backgroundCover.BackgroundCover)(_this.poster, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
       }
     };
 
@@ -207,6 +213,7 @@ var BackgroundVideo = function (_PureComponent) {
       var extraVideoElementProps = Object.assign(props.extraVideoElementProps, {
         playsInline: props.playsInline
       });
+
       var videoProps = _extends({
         ref: function ref(v) {
           return _this2.video = v;
@@ -222,8 +229,8 @@ var BackgroundVideo = function (_PureComponent) {
       return _react2.default.createElement(
         'div',
         {
-          ref: function ref(c) {
-            return _this2.container = c;
+          ref: function ref(r) {
+            return _this2.container = r;
           },
           className: className + ' ' + props.className,
           style: style,
@@ -238,10 +245,12 @@ var BackgroundVideo = function (_PureComponent) {
             return _react2.default.createElement('source', _extends({ key: key }, source));
           })
         ) : _react2.default.createElement('video', videoProps),
-        props.poster && !state.hasStarted && _react2.default.createElement('div', { style: _extends({}, absolute100, {
-            background: 'url(\'' + props.poster + '\') center center',
-            backgroundSize: 'cover'
-          })
+        props.poster && !state.hasStarted && _react2.default.createElement('img', {
+          src: props.poster,
+          ref: function ref(r) {
+            return _this2.poster = r;
+          },
+          onLoad: this._handlePosterReady
         })
       );
     }

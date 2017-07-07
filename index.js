@@ -70,13 +70,19 @@ class BackgroundVideo extends PureComponent {
     this._resize();
     this.setCurrentTime(this.props.startTime);
     this.props.autoPlay && this.play();
-    this.setState({visible: true});
     this.props.onReady(duration);
+    !this.poster && this.setState({visible: true});
+  };
+
+  _handlePosterReady = () => {
+    this._resize();
+    this.setState({visible: true});
   };
 
   _resize = () => {
     if (!this.props.disableBackgroundCover) {
       BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
+      this.poster && BackgroundCover(this.poster, this.container, this.props.horizontalAlign, this.props.verticalAlign);
     }
   };
 
@@ -167,44 +173,47 @@ class BackgroundVideo extends PureComponent {
     let extraVideoElementProps = Object.assign(props.extraVideoElementProps, {
       playsInline: props.playsInline
     });
-	const videoProps = {
-	  ref: v => this.video = v,
-	  src: typeof props.src === 'string' ? props.src : null,
-	  preload: props.preload,
-	  muted: props.muted,
-	  loop: props.loop,
-	  onTimeUpdate: this._handleTimeUpdate,
-	  onEnded: this._handleVideoEnd,
-	  poster: !state.hasStarted && props.poster || '',
-	  ...extraVideoElementProps
+
+    const videoProps = {
+      ref: v => this.video = v,
+      src: typeof props.src === 'string' ? props.src : null,
+      preload: props.preload,
+      muted: props.muted,
+      loop: props.loop,
+      onTimeUpdate: this._handleTimeUpdate,
+      onEnded: this._handleVideoEnd,
+      ...extraVideoElementProps
     };
 
     return (
       <div
-        ref={c => this.container = c}
+        ref={r => this.container = r}
         className={`${className} ${props.className}`}
         style={style}
         onClick={props.onClick}
         onKeyPress={props.onKeyPress}
         tabIndex={props.tabIndex}
       >
-		{typeof props.src === 'object' && props.src.length > 1 ? (
-		  <video {...videoProps}>
-			{props.src.map((source, key) => (
-			  <source key={key} {...source} />
-			))}
-		  </video>
-		) : (
-		  <video {...videoProps} />
-		)}
+        {
+          typeof props.src === 'object' && props.src.length > 1 ? (
+            <video{...videoProps}>
+              {
+                props.src.map((source, key) => (
+                  <source key={key} {...source} />
+                ))
+              }
+            </video>
+          ) : (
+            <video {...videoProps} />
+          )
+        }
 
         {
           (props.poster && !state.hasStarted) &&
-          <div style={{
-            ...absolute100,
-            background: `url('${props.poster}') center center`,
-            backgroundSize: 'cover'
-          }}
+          <img
+            src={props.poster}
+            ref={r => this.poster = r}
+            onLoad={this._handlePosterReady}
           />
         }
       </div>

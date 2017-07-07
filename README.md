@@ -2,9 +2,9 @@
 React background video component with simple player API. Supports inline play on iPhone.
 
 ## Install
-```npm i react-background-video-player```
+```npm i react-background-video-player --save```
 
-## Run example
+## Test
 In your terminal go to component folder and run ```npm t```
 
 ## Component Props
@@ -17,8 +17,8 @@ In your terminal go to component folder and run ```npm t```
   containerWidth: PropTypes.number.isRequired,
   containerHeight: PropTypes.number.isRequired,
   src: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array // check test/testSources.js to see an example
+    PropTypes.string, // single source
+    PropTypes.array   // multiple sources
   ]).isRequired,
   poster: PropTypes.string,
   horizontalAlign: PropTypes.number,
@@ -63,18 +63,18 @@ In your terminal go to component folder and run ```npm t```
   startTime: 0,
   tabIndex: 0,
   shouldComponentUpdate: true
-};
+}
 ```
 
 ## API
-* ```play```
-* ```pause```
+* ```play``` - play video
+* ```pause``` - pause video
 * ```togglePlay``` - automatically toggle play state based on current state
 * ```isPaused``` - get play state
-* ```mute```
-* ```unmute```
+* ```mute``` - mute video
+* ```unmute``` - unmute video
 * ```toggleMute``` - automatically toggle mute state based on current state
 * ```isMuted``` - get mute state
-* ```setCurrentTime```
+* ```setCurrentTime``` - jump in time
 
-Also refer to [example](https://github.com/Jam3/react-background-video-player/blob/master/example/example.js)
+Also refer to [examples](https://github.com/Jam3/react-background-video-player/tree/master/test)
