@@ -21,6 +21,7 @@ In your terminal go to component folder and run ```npm t```
     PropTypes.array   // multiple sources
   ]).isRequired,
   poster: PropTypes.string,
+  posterAlt: PropTypes.string,
   horizontalAlign: PropTypes.number,
   verticalAlign: PropTypes.number,
   preload: PropTypes.string,
@@ -52,6 +53,7 @@ In your terminal go to component folder and run ```npm t```
   style: {},
   className: '',
   poster: '',
+  posterAlt: '',
   horizontalAlign: 0.5,
   verticalAlign: 0.5,
   preload: 'auto',
