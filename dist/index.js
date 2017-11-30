@@ -247,6 +247,7 @@ var BackgroundVideo = function (_PureComponent) {
         ) : _react2.default.createElement('video', videoProps),
         props.poster && !state.hasStarted && _react2.default.createElement('img', {
           src: props.poster,
+          alt: props.posterAlt,
           ref: function ref(r) {
             return _this2.poster = r;
           },
@@ -268,6 +269,7 @@ BackgroundVideo.propTypes = {
   containerHeight: _propTypes2.default.number.isRequired,
   src: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.array]).isRequired,
   poster: _propTypes2.default.string,
+  posterAlt: _propTypes2.default.string,
   horizontalAlign: _propTypes2.default.number,
   verticalAlign: _propTypes2.default.number,
   preload: _propTypes2.default.string,
@@ -296,6 +298,7 @@ BackgroundVideo.defaultProps = {
   style: {},
   className: '',
   poster: '',
+  posterAlt:'',
   horizontalAlign: 0.5,
   verticalAlign: 0.5,
   preload: 'auto',

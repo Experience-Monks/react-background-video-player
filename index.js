@@ -212,6 +212,7 @@ class BackgroundVideo extends PureComponent {
           (props.poster && !state.hasStarted) &&
           <img
             src={props.poster}
+            alt={props.posterAlt}
             ref={r => this.poster = r}
             onLoad={this._handlePosterReady}
           />
@@ -233,6 +234,7 @@ BackgroundVideo.propTypes = {
     PropTypes.array
   ]).isRequired,
   poster: PropTypes.string,
+  posterAlt: PropTypes.string,
   horizontalAlign: PropTypes.number,
   verticalAlign: PropTypes.number,
   preload: PropTypes.string,
@@ -261,6 +263,7 @@ BackgroundVideo.defaultProps = {
   style: {},
   className: '',
   poster: '',
+  posterAlt: '',
   horizontalAlign: 0.5,
   verticalAlign: 0.5,
   preload: 'auto',

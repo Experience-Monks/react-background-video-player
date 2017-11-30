@@ -85,6 +85,7 @@ domready(() => {
             containerHeight={this.state.windowHeight}
             src={'http://clips.vorwaerts-gmbh.de/VfE_html5.mp4'}
             poster={'http://il6.picdn.net/shutterstock/videos/3548084/thumb/1.jpg?i10c=img.resize(height:160)'}
+            posterAlt={'Rabbit'}
             onPlay={this.handleOnPlay}
             onPause={this.handleOnPause}
             onMute={this.handleOnMute}
