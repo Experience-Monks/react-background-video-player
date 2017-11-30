@@ -1,5 +1,4 @@
-'use strict';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { BackgroundCover } from 'background-cover';
 import playInlineVideo from 'iphone-inline-video';
 import insertRule from 'insert-rule';
@@ -8,7 +7,7 @@ import PropTypes from 'prop-types';
 const iOSNavigator = typeof navigator !== 'undefined' && (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
 const iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
 
-class BackgroundVideo extends PureComponent {
+class BackgroundVideo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
