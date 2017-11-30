@@ -39,8 +39,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var iOSNavigator = typeof navigator !== 'undefined' && navigator.appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/);
 var iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
 
-var BackgroundVideo = function (_PureComponent) {
-  _inherits(BackgroundVideo, _PureComponent);
+var BackgroundVideo = function (_React$Component) {
+  _inherits(BackgroundVideo, _React$Component);
 
   function BackgroundVideo(props) {
     _classCallCheck(this, BackgroundVideo);
@@ -258,7 +258,7 @@ var BackgroundVideo = function (_PureComponent) {
   }]);
 
   return BackgroundVideo;
-}(_react.PureComponent);
+}(_react2.default.Component);
 
 BackgroundVideo.propTypes = {
   playsInline: _propTypes2.default.bool, // play inline on iPhone. avoid triggering native video player
@@ -298,7 +298,7 @@ BackgroundVideo.defaultProps = {
   style: {},
   className: '',
   poster: '',
-  posterAlt:'',
+  posterAlt: '',
   horizontalAlign: 0.5,
   verticalAlign: 0.5,
   preload: 'auto',
