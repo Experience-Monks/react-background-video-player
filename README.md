@@ -32,7 +32,6 @@ In your terminal go to component folder and run ```npm t```
   extraVideoElementProps: PropTypes.object,
   startTime: PropTypes.number,
   tabIndex: PropTypes.number,
-  shouldComponentUpdate: PropTypes.bool,
   onReady: PropTypes.func, // passes back `duration`
   onPlay: PropTypes.func,
   onPause: PropTypes.func,
@@ -64,7 +63,6 @@ In your terminal go to component folder and run ```npm t```
   extraVideoElementProps: {},
   startTime: 0,
   tabIndex: 0,
-  shouldComponentUpdate: true
 }
 ```
 
@@ -77,6 +75,6 @@ In your terminal go to component folder and run ```npm t```
 * ```unmute``` - unmute video
 * ```toggleMute``` - automatically toggle mute state based on current state
 * ```isMuted``` - get mute state
-* ```setCurrentTime``` - jump in time
+* ```setCurrentTime``` - seek in time
 
 Also refer to [examples](https://github.com/Jam3/react-background-video-player/tree/master/test)

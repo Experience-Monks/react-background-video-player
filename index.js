@@ -7,7 +7,9 @@ import PropTypes from 'prop-types';
 const iOSNavigator = typeof navigator !== 'undefined' && (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
 const iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
 
-class BackgroundVideo extends React.Component {
+const noop = () => {};
+
+export default class BackgroundVideo extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,30 +45,27 @@ class BackgroundVideo extends React.Component {
     this.video.volume = this.props.volume;
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.containerWidth !== prevProps.containerWidth ||
+      this.props.containerHeight !== prevProps.containerHeight
+    ) {
+      !this.props.disableBackgroundCover && this._resize();
+    }
+
+    if (this.props.volume !== prevProps.volume) {
+      this.video.volume = this.props.volume
+    }
+  }
+
   componentWillUnmount() {
     this.video.removeEventListener('loadedmetadata', this._handleVideoReady);
     this.video.removeEventListener('play', this._handleOnPlay);
     this.video.removeEventListener('pause', this._handleOnPause);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.containerWidth !== nextProps.containerWidth ||
-      this.props.containerHeight !== nextProps.containerHeight) {
-      this._resize();
-    }
-
-    if (this.props.volume !== nextProps.volume) {
-      this.video.volume = nextProps.volume
-    }
-  }
-
-  shouldComponentUpdate(nextState, nextProps) {
-    return this.props.shouldComponentUpdate;
-  }
-
   _handleVideoReady = () => {
     let duration = this.video.duration;
-    this._resize();
+    BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
     this.setCurrentTime(this.props.startTime);
     this.props.autoPlay && this.play();
     this.props.onReady(duration);
@@ -74,15 +73,13 @@ class BackgroundVideo extends React.Component {
   };
 
   _handlePosterReady = () => {
-    this._resize();
+    BackgroundCover(this.poster, this.container, this.props.horizontalAlign, this.props.verticalAlign);
     this.setState({visible: true});
   };
 
   _resize = () => {
-    if (!this.props.disableBackgroundCover) {
-      BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
-      this.poster && BackgroundCover(this.poster, this.container, this.props.horizontalAlign, this.props.verticalAlign);
-    }
+    this.video && BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
+    this.poster && BackgroundCover(this.poster, this.container, this.props.horizontalAlign, this.props.verticalAlign);
   };
 
   _handleOnPlay = () => {
@@ -194,7 +191,7 @@ class BackgroundVideo extends React.Component {
         tabIndex={props.tabIndex}
       >
         {
-          typeof props.src === 'object' && props.src.length > 1 ? (
+          typeof props.src === 'object' ? (
             <video{...videoProps}>
               {
                 props.src.map((source, key) => (
@@ -244,7 +241,6 @@ BackgroundVideo.propTypes = {
   extraVideoElementProps: PropTypes.object,
   startTime: PropTypes.number,
   tabIndex: PropTypes.number,
-  shouldComponentUpdate: PropTypes.bool,
   onReady: PropTypes.func, // passes back `duration`
   onPlay: PropTypes.func,
   onPause: PropTypes.func,
@@ -273,16 +269,13 @@ BackgroundVideo.defaultProps = {
   extraVideoElementProps: {},
   startTime: 0,
   tabIndex: 0,
-  shouldComponentUpdate: true,
-  onReady: f => f,
-  onPlay: f => f,
-  onPause: f => f,
-  onMute: f => f,
-  onUnmute: f => f,
-  onTimeUpdate: f => f,
-  onEnd: f => f,
-  onClick: f => f,
-  onKeyPress: f => f
+  onReady: noop,
+  onPlay: noop,
+  onPause: noop,
+  onMute: noop,
+  onUnmute: noop,
+  onTimeUpdate: noop,
+  onEnd: noop,
+  onClick: noop,
+  onKeyPress: noop
 };
-
-export default BackgroundVideo;

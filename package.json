@@ -1,6 +1,6 @@
 {
   "name": "react-background-video-player",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "React background video component with simple player API. Supports inline play on iPhone.",
   "main": "dist/index.js",
   "license": "MIT",
@@ -8,12 +8,12 @@
   "dependencies": {
     "background-cover": "0.0.6",
     "insert-rule": "^2.1.0",
-    "iphone-inline-video": "^2.0.2",
-    "prop-types": "^15.5.10"
+    "iphone-inline-video": "^2.2.2",
+    "prop-types": "^15.6.1"
   },
   "peerDependencies": {
-    "react": "^15.5.0",
-    "react-dom": "^15.5.0"
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
