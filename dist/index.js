@@ -14,6 +14,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 var _backgroundCover = require('background-cover');
 
 var _iphoneInlineVideo = require('iphone-inline-video');
@@ -23,10 +27,6 @@ var _iphoneInlineVideo2 = _interopRequireDefault(_iphoneInlineVideo);
 var _insertRule = require('insert-rule');
 
 var _insertRule2 = _interopRequireDefault(_insertRule);
-
-var _propTypes = require('prop-types');
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -41,6 +41,14 @@ var iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
 
 var noop = function noop() {};
 
+var absolute100 = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%'
+};
+
 var BackgroundVideo = function (_React$PureComponent) {
   _inherits(BackgroundVideo, _React$PureComponent);
 
@@ -50,26 +58,17 @@ var BackgroundVideo = function (_React$PureComponent) {
     var _this = _possibleConstructorReturn(this, (BackgroundVideo.__proto__ || Object.getPrototypeOf(BackgroundVideo)).call(this, props));
 
     _this._handleVideoReady = function () {
-      var duration = _this.video.duration;
-      (0, _backgroundCover.BackgroundCover)(_this.video, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
+      _this._resize();
       _this.setCurrentTime(_this.props.startTime);
       _this.props.autoPlay && _this.play();
-      _this.props.onReady(duration);
-      !_this.poster && _this.setState({ visible: true });
-    };
-
-    _this._handlePosterReady = function () {
-      (0, _backgroundCover.BackgroundCover)(_this.poster, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
-      _this.setState({ visible: true });
+      _this.props.onReady(_this.video.duration);
     };
 
     _this._resize = function () {
       _this.video && (0, _backgroundCover.BackgroundCover)(_this.video, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
-      _this.poster && (0, _backgroundCover.BackgroundCover)(_this.poster, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
     };
 
     _this._handleOnPlay = function () {
-      if (!_this.state.hasStarted) _this.setState({ hasStarted: true });
       _this.props.onPlay();
     };
 
@@ -90,11 +89,9 @@ var BackgroundVideo = function (_React$PureComponent) {
     };
 
     _this._handleIOSStartTime = function () {
-      if (_this.video.currentTime < _this.props.startTime) {
-        if (!_this.startTimeIsSet) {
-          _this.setCurrentTime(_this.props.startTime);
-          _this.startTimeIsSet = true;
-        }
+      if (_this.video.currentTime < _this.props.startTime && !_this.startTimeIsSet) {
+        _this.setCurrentTime(_this.props.startTime);
+        _this.startTimeIsSet = true;
       }
     };
 
@@ -137,8 +134,7 @@ var BackgroundVideo = function (_React$PureComponent) {
     };
 
     _this.state = {
-      visible: false,
-      hasStarted: false
+      visible: false
     };
     _this.startTimeIsSet = false;
     return _this;
@@ -148,7 +144,7 @@ var BackgroundVideo = function (_React$PureComponent) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       if (this.props.playsInline && iOSVersion) {
-        var hasAudio = !(iOSVersion && iOSVersion < 10 && this.props.autoPlay && this.props.muted); // allow auto play on iOS < 10 for silent videos
+        var hasAudio = !(iOSVersion && iOSVersion < 10 && this.props.autoPlay && this.props.muted); // allow autoplay on iOS < 10 for silent videos
         var requireInteractionOnTablet = false;
 
         (0, _iphoneInlineVideo2.default)(this.video, hasAudio, requireInteractionOnTablet);
@@ -170,8 +166,8 @@ var BackgroundVideo = function (_React$PureComponent) {
   }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate(prevProps) {
-      if (this.props.containerWidth !== prevProps.containerWidth || this.props.containerHeight !== prevProps.containerHeight) {
-        !this.props.disableBackgroundCover && this._resize();
+      if ((this.props.containerWidth !== prevProps.containerWidth || this.props.containerHeight !== prevProps.containerHeight) && !this.props.disableBackgroundCover) {
+        this._resize();
       }
 
       if (this.props.volume !== prevProps.volume) {
@@ -190,36 +186,20 @@ var BackgroundVideo = function (_React$PureComponent) {
     value: function render() {
       var _this2 = this;
 
-      var props = this.props;
-      var state = this.state;
-
-      var absolute100 = {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%'
-      };
-
-      var className = 'BackgroundVideo';
-      var visibility = state.visible ? 'visible' : 'hidden';
-      var style = Object.assign(_extends({}, absolute100, { visibility: visibility }), props.style);
-
-      var extraVideoElementProps = Object.assign(props.extraVideoElementProps, {
-        playsInline: props.playsInline
-      });
+      var visibility = this.state.visible ? 'visible' : 'hidden';
 
       var videoProps = _extends({
         ref: function ref(v) {
           return _this2.video = v;
         },
-        src: typeof props.src === 'string' ? props.src : null,
-        preload: props.preload,
-        muted: props.muted,
-        loop: props.loop,
+        src: typeof this.props.src === 'string' ? this.props.src : null,
+        preload: this.props.preload,
+        poster: this.props.poster,
+        muted: this.props.muted,
+        loop: this.props.loop,
         onTimeUpdate: this._handleTimeUpdate,
         onEnded: this._handleVideoEnd
-      }, extraVideoElementProps);
+      }, Object.assign(this.props.extraVideoElementProps, { playsInline: this.props.playsInline }));
 
       return _react2.default.createElement(
         'div',
@@ -227,27 +207,19 @@ var BackgroundVideo = function (_React$PureComponent) {
           ref: function ref(r) {
             return _this2.container = r;
           },
-          className: className + ' ' + props.className,
-          style: style,
-          onClick: props.onClick,
-          onKeyPress: props.onKeyPress,
-          tabIndex: props.tabIndex
+          className: 'BackgroundVideo ' + this.props.className,
+          style: Object.assign(_extends({}, absolute100, { visibility: visibility }), this.props.style),
+          onClick: this.props.onClick,
+          onKeyPress: this.props.onKeyPress,
+          tabIndex: this.props.tabIndex
         },
-        _typeof(props.src) === 'object' ? _react2.default.createElement(
+        _typeof(this.props.src) === 'object' ? _react2.default.createElement(
           'video',
           videoProps,
-          props.src.map(function (source, key) {
+          this.props.src.map(function (source, key) {
             return _react2.default.createElement('source', _extends({ key: key }, source));
           })
-        ) : _react2.default.createElement('video', videoProps),
-        props.poster && !state.hasStarted && _react2.default.createElement('img', {
-          src: props.poster,
-          alt: props.posterAlt,
-          ref: function ref(r) {
-            return _this2.poster = r;
-          },
-          onLoad: this._handlePosterReady
-        })
+        ) : _react2.default.createElement('video', videoProps)
       );
     }
   }]);
@@ -267,7 +239,6 @@ BackgroundVideo.propTypes = {
   containerHeight: _propTypes2.default.number.isRequired,
   src: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.array]).isRequired,
   poster: _propTypes2.default.string,
-  posterAlt: _propTypes2.default.string,
   horizontalAlign: _propTypes2.default.number,
   verticalAlign: _propTypes2.default.number,
   preload: _propTypes2.default.string,
@@ -295,7 +266,6 @@ BackgroundVideo.defaultProps = {
   style: {},
   className: '',
   poster: '',
-  posterAlt: '',
   horizontalAlign: 0.5,
   verticalAlign: 0.5,
   preload: 'auto',
