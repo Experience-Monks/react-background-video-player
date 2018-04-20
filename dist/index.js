@@ -59,6 +59,7 @@ var BackgroundVideo = function (_React$PureComponent) {
 
     _this._handleVideoReady = function () {
       _this._resize();
+      _this.setState({ visible: true });
       _this.setCurrentTime(_this.props.startTime);
       _this.props.autoPlay && _this.play();
       _this.props.onReady(_this.video.duration);
