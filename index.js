@@ -74,7 +74,7 @@ export default class BackgroundVideo extends React.PureComponent {
   _handleVideoReady = () => {
     this._resize();
     this.setState({visible: true});
-    this.setCurrentTime(this.props.startTime);
+    this.props.startTime && this.setCurrentTime(this.props.startTime);
     this.props.autoPlay && this.play();
     this.props.onReady(this.video.duration);
   };

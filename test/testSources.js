@@ -99,7 +99,6 @@ domready(() => {
             onMute={this.handleOnMute}
             onUnmute={this.handleOnUnmute}
             onTimeUpdate={this.handleTimeUpdate}
-            startTime={10}
             autoPlay={false}
             volume={0.5}
           />
