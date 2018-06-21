@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { BackgroundCover } from 'background-cover';
+import BackgroundCover from 'background-cover';
 import playInlineVideo from 'iphone-inline-video';
 import insertRule from 'insert-rule';
 

@@ -6,7 +6,7 @@
   "license": "MIT",
   "author": "Vadim Namniak <vadim@jam3.com> (https://github.com/namniak)",
   "dependencies": {
-    "background-cover": "0.0.6",
+    "background-cover": "0.1.0",
     "insert-rule": "^2.1.0",
     "iphone-inline-video": "^2.2.2",
     "prop-types": "^15.6.1",

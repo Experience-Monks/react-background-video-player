@@ -10,7 +10,6 @@ document.body.style.height = '100%';
 document.body.style.overflow = 'hidden';
 
 domready(() => {
-
   class Player extends Component {
     constructor(props) {
       super(props);

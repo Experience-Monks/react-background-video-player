@@ -20,6 +20,8 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _backgroundCover = require('background-cover');
 
+var _backgroundCover2 = _interopRequireDefault(_backgroundCover);
+
 var _iphoneInlineVideo = require('iphone-inline-video');
 
 var _iphoneInlineVideo2 = _interopRequireDefault(_iphoneInlineVideo);
@@ -66,7 +68,7 @@ var BackgroundVideo = function (_React$PureComponent) {
     };
 
     _this._resize = function () {
-      _this.video && (0, _backgroundCover.BackgroundCover)(_this.video, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
+      _this.video && (0, _backgroundCover2.default)(_this.video, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
     };
 
     _this._handleOnPlay = function () {
