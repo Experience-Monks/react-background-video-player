@@ -79,9 +79,9 @@ export default class BackgroundVideo extends React.PureComponent {
     this.props.onReady(this.video.duration);
   };
 
-  _resize = () => {
+  _resize() {
     this.video && BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
-  };
+  }
 
   _handleOnPlay = () => {
     this.props.onPlay();
@@ -103,50 +103,50 @@ export default class BackgroundVideo extends React.PureComponent {
     this.props.onEnd();
   };
 
-  _handleIOSStartTime = () => {
+  _handleIOSStartTime() {
     if (this.video.currentTime < this.props.startTime && !this.startTimeIsSet) {
       this.setCurrentTime(this.props.startTime);
       this.startTimeIsSet = true;
     }
-  };
+  }
 
-  play = () => {
+  play() {
     this.video.play();
-  };
+  }
 
-  pause = () => {
+  pause() {
     this.video.pause();
-  };
+  }
 
-  togglePlay = () => {
+  togglePlay() {
     this.video.paused ? this.play() : this.pause();
-  };
+  }
 
-  isPaused = () => {
+  isPaused() {
     return this.video.paused;
-  };
+  }
 
-  mute = () => {
+  mute() {
     this.video.muted = true;
     this.props.onMute();
-  };
+  }
 
-  unmute = () => {
+  unmute() {
     this.video.muted = false;
     this.props.onUnmute();
-  };
+  }
 
-  toggleMute = () => {
+  toggleMute() {
     this.video.muted ? this.unmute() : this.mute();
-  };
+  }
 
-  isMuted = () => {
+  isMuted() {
     return this.video.muted;
-  };
+  }
 
-  setCurrentTime = (val) => {
+  setCurrentTime(val) {
     this.video.currentTime = val;
-  };
+  }
 
   render() {
     const visibility = this.state.visible ? 'visible' : 'hidden';
