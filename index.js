@@ -29,15 +29,22 @@ export default class BackgroundVideo extends React.PureComponent {
 
   componentDidMount() {
     if (this.props.playsInline && iOSVersion) {
-      const hasAudio = !(iOSVersion && iOSVersion < 10 && this.props.autoPlay && this.props.muted); // allow autoplay on iOS < 10 for silent videos
+      const hasAudio = !(
+        iOSVersion &&
+        iOSVersion < 10 &&
+        this.props.autoPlay &&
+        this.props.muted
+      ); // allow autoplay on iOS < 10 for silent videos
       const requireInteractionOnTablet = false;
 
       playInlineVideo(this.video, hasAudio, requireInteractionOnTablet);
-      insertRule([
+      insertRule(
+        [
           'video::-webkit-media-controls-start-playback-button',
           '.IIV::-webkit-media-controls-play-button'
-        ], {
-          display: 'none',
+        ],
+        {
+          display: 'none'
         }
       );
     }
@@ -54,8 +61,10 @@ export default class BackgroundVideo extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if ((this.props.containerWidth !== prevProps.containerWidth ||
-      this.props.containerHeight !== prevProps.containerHeight) && !this.props.disableBackgroundCover
+    if (
+      (this.props.containerWidth !== prevProps.containerWidth ||
+        this.props.containerHeight !== prevProps.containerHeight) &&
+      !this.props.disableBackgroundCover
     ) {
       this._resize();
     }
@@ -76,14 +85,20 @@ export default class BackgroundVideo extends React.PureComponent {
       this._resize();
     }
 
-    this.setState({visible: true});
+    this.setState({ visible: true });
     this.props.startTime && this.setCurrentTime(this.props.startTime);
     this.props.autoPlay && this.play();
     this.props.onReady(this.video.duration);
   };
 
   _resize() {
-    this.video && BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
+    this.video &&
+      BackgroundCover(
+        this.video,
+        this.container,
+        this.props.horizontalAlign,
+        this.props.verticalAlign
+      );
   }
 
   _handleOnPlay = () => {
@@ -155,7 +170,7 @@ export default class BackgroundVideo extends React.PureComponent {
     const visibility = this.state.visible ? 'visible' : 'hidden';
 
     const videoProps = {
-      ref: v => this.video = v,
+      ref: v => (this.video = v),
       src: typeof this.props.src === 'string' ? this.props.src : null,
       preload: this.props.preload,
       poster: this.props.poster,
@@ -163,48 +178,47 @@ export default class BackgroundVideo extends React.PureComponent {
       loop: this.props.loop,
       onTimeUpdate: this._handleTimeUpdate,
       onEnded: this._handleVideoEnd,
-      ...Object.assign(this.props.extraVideoElementProps, {playsInline: this.props.playsInline})
+      ...Object.assign(this.props.extraVideoElementProps, {
+        playsInline: this.props.playsInline
+      })
     };
 
     return (
       <div
-        ref={r => this.container = r}
+        ref={r => (this.container = r)}
         className={`BackgroundVideo ${this.props.className}`}
-        style={Object.assign({...absolute100, visibility}, this.props.style)}
+        style={Object.assign({ ...absolute100, visibility }, this.props.style)}
         onClick={this.props.onClick}
         onKeyPress={this.props.onKeyPress}
         tabIndex={this.props.tabIndex}
       >
-        {
-          typeof this.props.src === 'object' ? (
-            <video{...videoProps}>
-              {this.props.src.map((source, key) => <source key={key} {...source} />)}
-            </video>
-          ) : (
-            <video {...videoProps} />
-          )
-        }
+        {typeof this.props.src === 'object' ? (
+          <video {...videoProps}>
+            {this.props.src.map((source, key) => (
+              <source key={key} {...source} />
+            ))}
+          </video>
+        ) : (
+          <video {...videoProps} />
+        )}
       </div>
     );
   }
 }
 
 BackgroundVideo.propTypes = {
-  playsInline: PropTypes.bool,             // play inline on iPhone. avoid triggering native video player
-  disableBackgroundCover: PropTypes.bool,  // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
+  playsInline: PropTypes.bool, // play inline on iPhone. avoid triggering native video player
+  disableBackgroundCover: PropTypes.bool, // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
   style: PropTypes.object,
   className: PropTypes.string,
   containerWidth: PropTypes.number.isRequired,
   containerHeight: PropTypes.number.isRequired,
-  src: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]).isRequired,
+  src: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
   poster: PropTypes.string,
   horizontalAlign: PropTypes.number,
   verticalAlign: PropTypes.number,
   preload: PropTypes.string,
-  muted: PropTypes.bool,   // required to be set to true for auto play on mobile in combination with 'autoPlay' option
+  muted: PropTypes.bool, // required to be set to true for auto play on mobile in combination with 'autoPlay' option
   volume: PropTypes.number,
   loop: PropTypes.bool,
   autoPlay: PropTypes.bool,

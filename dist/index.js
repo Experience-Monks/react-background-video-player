@@ -60,15 +60,14 @@ var BackgroundVideo = function (_React$PureComponent) {
     var _this = _possibleConstructorReturn(this, (BackgroundVideo.__proto__ || Object.getPrototypeOf(BackgroundVideo)).call(this, props));
 
     _this._handleVideoReady = function () {
-      _this._resize();
+      if (!_this.props.disableBackgroundCover) {
+        _this._resize();
+      }
+
       _this.setState({ visible: true });
       _this.props.startTime && _this.setCurrentTime(_this.props.startTime);
       _this.props.autoPlay && _this.play();
       _this.props.onReady(_this.video.duration);
-    };
-
-    _this._resize = function () {
-      _this.video && (0, _backgroundCover2.default)(_this.video, _this.container, _this.props.horizontalAlign, _this.props.verticalAlign);
     };
 
     _this._handleOnPlay = function () {
@@ -89,51 +88,6 @@ var BackgroundVideo = function (_React$PureComponent) {
 
     _this._handleVideoEnd = function () {
       _this.props.onEnd();
-    };
-
-    _this._handleIOSStartTime = function () {
-      if (_this.video.currentTime < _this.props.startTime && !_this.startTimeIsSet) {
-        _this.setCurrentTime(_this.props.startTime);
-        _this.startTimeIsSet = true;
-      }
-    };
-
-    _this.play = function () {
-      _this.video.play();
-    };
-
-    _this.pause = function () {
-      _this.video.pause();
-    };
-
-    _this.togglePlay = function () {
-      _this.video.paused ? _this.play() : _this.pause();
-    };
-
-    _this.isPaused = function () {
-      return _this.video.paused;
-    };
-
-    _this.mute = function () {
-      _this.video.muted = true;
-      _this.props.onMute();
-    };
-
-    _this.unmute = function () {
-      _this.video.muted = false;
-      _this.props.onUnmute();
-    };
-
-    _this.toggleMute = function () {
-      _this.video.muted ? _this.unmute() : _this.mute();
-    };
-
-    _this.isMuted = function () {
-      return _this.video.muted;
-    };
-
-    _this.setCurrentTime = function (val) {
-      _this.video.currentTime = val;
     };
 
     _this.state = {
@@ -185,6 +139,66 @@ var BackgroundVideo = function (_React$PureComponent) {
       this.video.removeEventListener('pause', this._handleOnPause);
     }
   }, {
+    key: '_resize',
+    value: function _resize() {
+      this.video && (0, _backgroundCover2.default)(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
+    }
+  }, {
+    key: '_handleIOSStartTime',
+    value: function _handleIOSStartTime() {
+      if (this.video.currentTime < this.props.startTime && !this.startTimeIsSet) {
+        this.setCurrentTime(this.props.startTime);
+        this.startTimeIsSet = true;
+      }
+    }
+  }, {
+    key: 'play',
+    value: function play() {
+      this.video.play();
+    }
+  }, {
+    key: 'pause',
+    value: function pause() {
+      this.video.pause();
+    }
+  }, {
+    key: 'togglePlay',
+    value: function togglePlay() {
+      this.video.paused ? this.play() : this.pause();
+    }
+  }, {
+    key: 'isPaused',
+    value: function isPaused() {
+      return this.video.paused;
+    }
+  }, {
+    key: 'mute',
+    value: function mute() {
+      this.video.muted = true;
+      this.props.onMute();
+    }
+  }, {
+    key: 'unmute',
+    value: function unmute() {
+      this.video.muted = false;
+      this.props.onUnmute();
+    }
+  }, {
+    key: 'toggleMute',
+    value: function toggleMute() {
+      this.video.muted ? this.unmute() : this.mute();
+    }
+  }, {
+    key: 'isMuted',
+    value: function isMuted() {
+      return this.video.muted;
+    }
+  }, {
+    key: 'setCurrentTime',
+    value: function setCurrentTime(val) {
+      this.video.currentTime = val;
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
@@ -202,7 +216,9 @@ var BackgroundVideo = function (_React$PureComponent) {
         loop: this.props.loop,
         onTimeUpdate: this._handleTimeUpdate,
         onEnded: this._handleVideoEnd
-      }, Object.assign(this.props.extraVideoElementProps, { playsInline: this.props.playsInline }));
+      }, Object.assign(this.props.extraVideoElementProps, {
+        playsInline: this.props.playsInline
+      }));
 
       return _react2.default.createElement(
         'div',
