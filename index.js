@@ -5,7 +5,7 @@ import BackgroundCover from 'background-cover';
 import playInlineVideo from 'iphone-inline-video';
 import insertRule from 'insert-rule';
 
-const iOSNavigator = typeof navigator !== 'undefined' && (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+const iOSNavigator = typeof navigator !== 'undefined' && navigator.appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/);
 const iOSVersion = iOSNavigator ? iOSNavigator[1] : null;
 
 const noop = () => {};
@@ -15,49 +15,40 @@ const absolute100 = {
   top: 0,
   left: 0,
   width: '100%',
-  height: '100%'
+  height: '100%',
 };
 
 export default class BackgroundVideo extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false
+      visible: false,
     };
     this.startTimeIsSet = false;
   }
 
   componentDidMount() {
     if (this.props.playsInline && iOSVersion) {
-      const hasAudio = !(
-        iOSVersion &&
-        iOSVersion < 10 &&
-        this.props.autoPlay &&
-        this.props.muted
-      ); // allow autoplay on iOS < 10 for silent videos
+      const hasAudio = !(iOSVersion && iOSVersion < 10 && this.props.autoPlay && this.props.muted); // allow autoplay on iOS < 10 for silent videos
       const requireInteractionOnTablet = false;
 
       playInlineVideo(this.video, hasAudio, requireInteractionOnTablet);
-      insertRule(
-        [
-          'video::-webkit-media-controls-start-playback-button',
-          '.IIV::-webkit-media-controls-play-button'
-        ],
-        {
-          display: 'none'
-        }
-      );
+      insertRule(['video::-webkit-media-controls-start-playback-button', '.IIV::-webkit-media-controls-play-button'], {
+        display: 'none',
+      });
     }
 
-    if (this.video.readyState !== 4) {
-      this.video.addEventListener('loadedmetadata', this._handleVideoReady);
-    } else {
-      this._handleVideoReady();
-    }
+    if (this.video) {
+      if (this.video.readyState !== 4) {
+        this.video.addEventListener('loadedmetadata', this._handleVideoReady);
+      } else {
+        this._handleVideoReady();
+      }
 
-    this.video.addEventListener('play', this._handleOnPlay);
-    this.video.addEventListener('pause', this._handleOnPause);
-    this.video.volume = this.props.volume;
+      this.video.addEventListener('play', this._handleOnPlay);
+      this.video.addEventListener('pause', this._handleOnPause);
+      this.video.volume = this.props.volume;
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -69,12 +60,13 @@ export default class BackgroundVideo extends React.PureComponent {
       this._resize();
     }
 
-    if (this.props.volume !== prevProps.volume) {
+    if (this.video && this.props.volume !== prevProps.volume) {
       this.video.volume = this.props.volume;
     }
   }
 
   componentWillUnmount() {
+    if (!this.video) return;
     this.video.removeEventListener('loadedmetadata', this._handleVideoReady);
     this.video.removeEventListener('play', this._handleOnPlay);
     this.video.removeEventListener('pause', this._handleOnPause);
@@ -88,17 +80,11 @@ export default class BackgroundVideo extends React.PureComponent {
     this.setState({ visible: true });
     this.props.startTime && this.setCurrentTime(this.props.startTime);
     this.props.autoPlay && this.play();
-    this.props.onReady(this.video.duration);
+    this.video && this.props.onReady(this.video.duration);
   };
 
   _resize() {
-    this.video &&
-      BackgroundCover(
-        this.video,
-        this.container,
-        this.props.horizontalAlign,
-        this.props.verticalAlign
-      );
+    this.video && BackgroundCover(this.video, this.container, this.props.horizontalAlign, this.props.verticalAlign);
   }
 
   _handleOnPlay = () => {
@@ -110,6 +96,7 @@ export default class BackgroundVideo extends React.PureComponent {
   };
 
   _handleTimeUpdate = () => {
+    if (!this.video) return;
     iOSVersion && this._handleIOSStartTime();
     const currentTime = this.video.currentTime;
     const duration = this.video.duration;
@@ -122,6 +109,7 @@ export default class BackgroundVideo extends React.PureComponent {
   };
 
   _handleIOSStartTime() {
+    if (!this.video) return;
     if (this.video.currentTime < this.props.startTime && !this.startTimeIsSet) {
       this.setCurrentTime(this.props.startTime);
       this.startTimeIsSet = true;
@@ -129,40 +117,45 @@ export default class BackgroundVideo extends React.PureComponent {
   }
 
   play() {
-    this.video.play();
+    this.video && this.video.play();
   }
 
   pause() {
-    this.video.pause();
+    this.video && this.video.pause();
   }
 
   togglePlay() {
+    if (!this.video) return;
     this.video.paused ? this.play() : this.pause();
   }
 
   isPaused() {
-    return this.video.paused;
+    return this.video ? this.video.paused : false;
   }
 
   mute() {
+    if (!this.video) return;
     this.video.muted = true;
     this.props.onMute();
   }
 
   unmute() {
+    if (!this.video) return;
     this.video.muted = false;
     this.props.onUnmute();
   }
 
   toggleMute() {
+    if (!this.video) return;
     this.video.muted ? this.unmute() : this.mute();
   }
 
   isMuted() {
-    return this.video.muted;
+    return this.video ? this.video.muted : false;
   }
 
   setCurrentTime(val) {
+    if (!this.video) return;
     this.video.currentTime = val;
   }
 
@@ -170,7 +163,7 @@ export default class BackgroundVideo extends React.PureComponent {
     const visibility = this.state.visible ? 'visible' : 'hidden';
 
     const videoProps = {
-      ref: v => (this.video = v),
+      ref: (v) => (this.video = v),
       src: typeof this.props.src === 'string' ? this.props.src : null,
       preload: this.props.preload,
       poster: this.props.poster,
@@ -179,13 +172,13 @@ export default class BackgroundVideo extends React.PureComponent {
       onTimeUpdate: this._handleTimeUpdate,
       onEnded: this._handleVideoEnd,
       ...Object.assign(this.props.extraVideoElementProps, {
-        playsInline: this.props.playsInline
-      })
+        playsInline: this.props.playsInline,
+      }),
     };
 
     return (
       <div
-        ref={r => (this.container = r)}
+        ref={(r) => (this.container = r)}
         className={`BackgroundVideo ${this.props.className}`}
         style={Object.assign({ ...absolute100, visibility }, this.props.style)}
         onClick={this.props.onClick}
@@ -211,10 +204,10 @@ BackgroundVideo.propTypes = {
   disableBackgroundCover: PropTypes.bool, // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
   style: PropTypes.object,
   className: PropTypes.string,
-  containerWidth: PropTypes.number.isRequired,
-  containerHeight: PropTypes.number.isRequired,
+  containerWidth: PropTypes.number,
+  containerHeight: PropTypes.number,
   src: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
-  poster: PropTypes.string,
+  poster: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   horizontalAlign: PropTypes.number,
   verticalAlign: PropTypes.number,
   preload: PropTypes.string,
@@ -233,15 +226,13 @@ BackgroundVideo.propTypes = {
   onTimeUpdate: PropTypes.func, // passes back `currentTime`, `progress` and `duration`
   onEnd: PropTypes.func,
   onClick: PropTypes.func,
-  onKeyPress: PropTypes.func
+  onKeyPress: PropTypes.func,
 };
 
 BackgroundVideo.defaultProps = {
   playsInline: true,
   disableBackgroundCover: false,
   style: {},
-  className: '',
-  poster: '',
   horizontalAlign: 0.5,
   verticalAlign: 0.5,
   preload: 'auto',
@@ -260,5 +251,5 @@ BackgroundVideo.defaultProps = {
   onTimeUpdate: noop,
   onEnd: noop,
   onClick: noop,
-  onKeyPress: noop
+  onKeyPress: noop,
 };
