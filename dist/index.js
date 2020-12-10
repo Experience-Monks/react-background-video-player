@@ -67,7 +67,7 @@ var BackgroundVideo = function (_React$PureComponent) {
       _this.setState({ visible: true });
       _this.props.startTime && _this.setCurrentTime(_this.props.startTime);
       _this.props.autoPlay && _this.play();
-      _this.props.onReady(_this.video.duration);
+      _this.video && _this.props.onReady(_this.video.duration);
     };
 
     _this._handleOnPlay = function () {
@@ -79,6 +79,7 @@ var BackgroundVideo = function (_React$PureComponent) {
     };
 
     _this._handleTimeUpdate = function () {
+      if (!_this.video) return;
       iOSVersion && _this._handleIOSStartTime();
       var currentTime = _this.video.currentTime;
       var duration = _this.video.duration;
@@ -110,15 +111,17 @@ var BackgroundVideo = function (_React$PureComponent) {
         });
       }
 
-      if (this.video.readyState !== 4) {
-        this.video.addEventListener('loadedmetadata', this._handleVideoReady);
-      } else {
-        this._handleVideoReady();
-      }
+      if (this.video) {
+        if (this.video.readyState !== 4) {
+          this.video.addEventListener('loadedmetadata', this._handleVideoReady);
+        } else {
+          this._handleVideoReady();
+        }
 
-      this.video.addEventListener('play', this._handleOnPlay);
-      this.video.addEventListener('pause', this._handleOnPause);
-      this.video.volume = this.props.volume;
+        this.video.addEventListener('play', this._handleOnPlay);
+        this.video.addEventListener('pause', this._handleOnPause);
+        this.video.volume = this.props.volume;
+      }
     }
   }, {
     key: 'componentDidUpdate',
@@ -127,13 +130,14 @@ var BackgroundVideo = function (_React$PureComponent) {
         this._resize();
       }
 
-      if (this.props.volume !== prevProps.volume) {
+      if (this.video && this.props.volume !== prevProps.volume) {
         this.video.volume = this.props.volume;
       }
     }
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
+      if (!this.video) return;
       this.video.removeEventListener('loadedmetadata', this._handleVideoReady);
       this.video.removeEventListener('play', this._handleOnPlay);
       this.video.removeEventListener('pause', this._handleOnPause);
@@ -146,6 +150,7 @@ var BackgroundVideo = function (_React$PureComponent) {
   }, {
     key: '_handleIOSStartTime',
     value: function _handleIOSStartTime() {
+      if (!this.video) return;
       if (this.video.currentTime < this.props.startTime && !this.startTimeIsSet) {
         this.setCurrentTime(this.props.startTime);
         this.startTimeIsSet = true;
@@ -154,48 +159,53 @@ var BackgroundVideo = function (_React$PureComponent) {
   }, {
     key: 'play',
     value: function play() {
-      this.video.play();
+      this.video && this.video.play();
     }
   }, {
     key: 'pause',
     value: function pause() {
-      this.video.pause();
+      this.video && this.video.pause();
     }
   }, {
     key: 'togglePlay',
     value: function togglePlay() {
+      if (!this.video) return;
       this.video.paused ? this.play() : this.pause();
     }
   }, {
     key: 'isPaused',
     value: function isPaused() {
-      return this.video.paused;
+      return this.video ? this.video.paused : false;
     }
   }, {
     key: 'mute',
     value: function mute() {
+      if (!this.video) return;
       this.video.muted = true;
       this.props.onMute();
     }
   }, {
     key: 'unmute',
     value: function unmute() {
+      if (!this.video) return;
       this.video.muted = false;
       this.props.onUnmute();
     }
   }, {
     key: 'toggleMute',
     value: function toggleMute() {
+      if (!this.video) return;
       this.video.muted ? this.unmute() : this.mute();
     }
   }, {
     key: 'isMuted',
     value: function isMuted() {
-      return this.video.muted;
+      return this.video ? this.video.muted : false;
     }
   }, {
     key: 'setCurrentTime',
     value: function setCurrentTime(val) {
+      if (!this.video) return;
       this.video.currentTime = val;
     }
   }, {
@@ -254,10 +264,10 @@ BackgroundVideo.propTypes = {
   disableBackgroundCover: _propTypes2.default.bool, // do not apply cover effect (e.g. disable it for specific screen resolution or aspect ratio)
   style: _propTypes2.default.object,
   className: _propTypes2.default.string,
-  containerWidth: _propTypes2.default.number.isRequired,
-  containerHeight: _propTypes2.default.number.isRequired,
+  containerWidth: _propTypes2.default.number,
+  containerHeight: _propTypes2.default.number,
   src: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.array]).isRequired,
-  poster: _propTypes2.default.string,
+  poster: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.object]),
   horizontalAlign: _propTypes2.default.number,
   verticalAlign: _propTypes2.default.number,
   preload: _propTypes2.default.string,
@@ -283,8 +293,6 @@ BackgroundVideo.defaultProps = {
   playsInline: true,
   disableBackgroundCover: false,
   style: {},
-  className: '',
-  poster: '',
   horizontalAlign: 0.5,
   verticalAlign: 0.5,
   preload: 'auto',
